@@ -1,38 +1,35 @@
-.App {
-  text-align: center;
+/* 
+  App.css
+  Main application stylesheet that imports all modular CSS files
+  Structure: Imports all styles from /styles directory in logical order
+*/
+
+/* Import all modular stylesheets */
+@import './styles/Layout.css';
+@import './styles/Sidebar.css';
+@import './styles/Header.css';
+@import './styles/Dashboard.css';
+@import './styles/Transactions.css';
+@import './styles/Insights.css';
+
+
+.dark-mode .checklist {
+  background: #1e1e1e;
+  border-color: #333;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.dark-mode .checklist h2 {
+  color: #fff;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.dark-mode .checklist li {
+  color: #aaa;
+  border-bottom-color: #333;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media (max-width: 1200px) {
+  .checklist {
+    position: static;
+    height: auto;
   }
 }

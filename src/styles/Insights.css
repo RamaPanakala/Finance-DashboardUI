@@ -1,0 +1,336 @@
+/* 
+  Insights.css
+  Styling for insights panel with spending data and recommendations
+  Features: Insight cards, icons, progress indicators, color-coded categories
+*/
+
+.insights-container {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #f0f0f0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.insights-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.insights-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.insights-filter {
+  padding: 6px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  background: white;
+  font-size: 12px;
+  color: #666;
+  cursor: pointer;
+}
+
+/* Individual Insight Card */
+.insight-card {
+  background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  border-left: 4px solid #667eea;
+  transition: all 0.3s ease;
+}
+
+.insight-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.insight-card.positive {
+  border-left-color: #2ecc71;
+}
+
+.insight-card.cautionary {
+  border-left-color: #ffa500;
+}
+
+.insight-card.negative {
+  border-left-color: #ff4757;
+}
+
+.insight-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.insight-icon.positive {
+  background: rgba(46, 204, 113, 0.1);
+  color: #2ecc71;
+}
+
+.insight-icon.cautionary {
+  background: rgba(255, 165, 0, 0.1);
+  color: #ffa500;
+}
+
+.insight-icon.negative {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+}
+
+.insight-content {
+  flex: 1;
+}
+
+.insight-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.insight-description {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.insight-highlight {
+  font-weight: 700;
+  color: #667eea;
+}
+
+/* Spending Categories Section */
+.spending-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.spending-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+  color: #999;
+}
+
+.spending-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.spending-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.spending-item:last-child {
+  border-bottom: none;
+}
+
+.spending-category {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spending-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.spending-icon.food {
+  background: rgba(255, 165, 0, 0.1);
+  color: #ffa500;
+}
+
+.spending-icon.shopping {
+  background: rgba(155, 89, 182, 0.1);
+  color: #9b59b6;
+}
+
+.spending-icon.transport {
+  background: rgba(52, 152, 219, 0.1);
+  color: #3498db;
+}
+
+.spending-icon.utilities {
+  background: rgba(241, 196, 15, 0.1);
+  color: #f1c40f;
+}
+
+.spending-icon.entertainment {
+  background: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+}
+
+.spending-icon.other {
+  background: rgba(149, 165, 166, 0.1);
+  color: #95a5a6;
+}
+
+.spending-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.spending-amount {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.spending-percentage {
+  font-size: 11px;
+  color: #999;
+  margin-left: 4px;
+}
+
+/* View All Link */
+.view-all-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: #667eea;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.view-all-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+/* Dark Mode */
+.dark-mode .insights-container {
+  background: #1e1e1e;
+  border-color: #333;
+}
+
+.dark-mode .insight-card {
+  background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+}
+
+.dark-mode .insight-title {
+  color: #fff;
+}
+
+.dark-mode .insight-description {
+  color: #aaa;
+}
+
+.dark-mode .spending-title {
+  color: #aaa;
+}
+
+.dark-mode .spending-item {
+  border-bottom-color: #333;
+}
+
+.dark-mode .spending-name,
+.dark-mode .spending-amount {
+  color: #fff;
+}
+
+.dark-mode .spending-percentage {
+  color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .insights-container {
+    padding: 16px;
+  }
+
+  .insight-card {
+    padding: 12px;
+  }
+
+  .insight-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  .insight-title {
+    font-size: 12px;
+  }
+
+  .insight-description {
+    font-size: 11px;
+  }
+
+  .spending-item {
+    padding: 10px 0;
+  }
+
+  .spending-name {
+    font-size: 12px;
+  }
+
+  .spending-amount {
+    font-size: 12px;
+  }
+}
+
+/* Fullscreen Mode Styles */
+.fullscreen-viewer .insights-container {
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  margin: 0;
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.fullscreen-viewer .insight-card {
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.fullscreen-viewer .spending-section {
+  margin-top: 32px;
+  padding-top: 32px;
+}
+
+.fullscreen-viewer .spending-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+}

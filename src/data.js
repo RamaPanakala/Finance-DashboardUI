@@ -1,0 +1,17 @@
+export const mockTransactions = [
+  { id: 1, date: '2023-01-01', amount: 5000, category: 'Salary', type: 'income' },
+  { id: 2, date: '2023-01-02', amount: -200, category: 'Groceries', type: 'expense' },
+  { id: 3, date: '2023-01-03', amount: -100, category: 'Transport', type: 'expense' },
+  { id: 4, date: '2023-01-04', amount: 1000, category: 'Freelance', type: 'income' },
+  { id: 5, date: '2023-01-05', amount: -50, category: 'Entertainment', type: 'expense' },
+  { id: 6, date: '2023-02-01', amount: 5000, category: 'Salary', type: 'income' },
+  { id: 7, date: '2023-02-02', amount: -300, category: 'Groceries', type: 'expense' },
+  { id: 8, date: '2023-02-03', amount: -150, category: 'Transport', type: 'expense' },
+  { id: 9, date: '2023-02-04', amount: -200, category: 'Utilities', type: 'expense' },
+  { id: 10, date: '2023-02-05', amount: -100, category: 'Entertainment', type: 'expense' },
+  { id: 11, date: '2023-03-01', amount: 5000, category: 'Salary', type: 'income' },
+  { id: 12, date: '2023-03-02', amount: -250, category: 'Groceries', type: 'expense' },
+  { id: 13, date: '2023-03-03', amount: -120, category: 'Transport', type: 'expense' },
+  { id: 14, date: '2023-03-04', amount: -180, category: 'Utilities', type: 'expense' },
+  { id: 15, date: '2023-03-05', amount: -80, category: 'Entertainment', type: 'expense' },
+];

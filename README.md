@@ -1,23 +1,49 @@
-# Getting Started with Create React App
+# Finance Dashboard UI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A clean and interactive finance dashboard built with React, featuring data visualization, transaction management, and role-based access control.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Dashboard Overview**: Summary cards for total balance, income, and expenses. Time-based balance trend chart and categorical spending breakdown pie chart.
+- **Transactions Section**: List of transactions with filtering and search. Admin role can add, edit, and delete transactions.
+- **Role-Based UI**: Switch between Viewer (read-only) and Admin (full access) roles.
+- **Insights Section**: Displays highest spending category, monthly comparisons, and spending by category.
+- **State Management**: Uses React Context for managing application state.
+- **Responsive Design**: Works on different screen sizes.
+- **Dark Mode**: Toggle between light and dark themes.
+- **Data Persistence**: Transactions are saved to localStorage.
 
-### `npm start`
+## Technologies Used
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- React 19
+- Tailwind CSS for styling
+- Recharts for data visualization
+- React Icons
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository.
+2. Navigate to the frontend directory: `cd frontend`
+3. Install dependencies: `npm install`
+4. Start the development server: `npm start`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Usage
+
+- Use the role selector to switch between Viewer and Admin modes.
+- In Admin mode, add new transactions using the "Add Transaction" button.
+- Filter transactions by type, category, or search term.
+- View insights and charts on the dashboard.
+
+## Approach
+
+This dashboard was built with a focus on clean UI/UX, modularity, and responsiveness. Components are structured logically, and state is managed centrally using React Context. Mock data is used for demonstration, and the app handles empty states gracefully.
+
+## Future Enhancements
+
+- Backend integration for real data
+- More advanced filtering and sorting
+- Export functionality
+- Animations and transitions
 
 ### `npm run build`
 
