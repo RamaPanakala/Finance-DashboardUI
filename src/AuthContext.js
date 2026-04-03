@@ -92,7 +92,7 @@ export const AuthProvider = ({ children }) => {
       // const data = await response.json();
       
       // Temporary mock implementation
-      if (email === 'admin@example.com' && password === 'admin123') {
+      if (email === 'admin@gmail.com' && password === 'admin123') {
         const adminUser = {
           id: 'admin-1',
           name: 'Admin User',
@@ -162,8 +162,10 @@ export const AuthProvider = ({ children }) => {
   return (
     <AuthContext.Provider value={{
       user,
+      setUser,
       isAuthenticated,
       userRole,
+      setUserRole,
       loading,
       error,
       loginViewer,

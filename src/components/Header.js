@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../AppContext';
 import { useAuth } from '../AuthContext';
 import CurrencySelector from './CurrencySelector';
+import RoleSelector from './RoleSelector';
 import Profile from './Profile';
 import '../styles/Header.css';
 
@@ -79,11 +80,14 @@ const Header = () => {
 
         {/* Right Section: Actions & Profile */}
         <div className="header-actions">
-          {/* Role Badge */}
+          {/* Role Selector */}
+          <RoleSelector />
+
+          {/* Role Badge 
           <div className={`role-badge ${userRole}`}>
             {userRole === 'admin' ? '🔐 Admin' : '👁️ Viewer'}
           </div>
-
+          */}
           {/* Currency Selector */}
           <CurrencySelector 
             currentCurrency={currency} 

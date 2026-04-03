@@ -9,13 +9,14 @@
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   position: relative;
   z-index: 50;
   flex-shrink: 0;
   overflow: visible;
+  min-height: 60px;
 }
 
 .header-left {
@@ -46,6 +47,8 @@
   align-items: center;
   gap: 16px;
   margin-left: auto;
+  position: relative;
+  z-index: 51;
 }
 
 /* Role Badge */
@@ -300,37 +303,8 @@ body.dark-mode .dropdown-item.logout {
   color: #ff6b6b;
 }
 
-body.dark-mode .dropdown-item.logout:hover {
-  background: rgba(255, 71, 87, 0.1);
-}
-
-body.dark-mode .dropdown-divider {
-  background: #333;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .header {
-    flex-wrap: wrap;
-    padding: 12px 16px;
-  }
-
-  .user-info {
-    display: none;
-  }
-
-  .header-title {
-    font-size: 20px;
-  }
-
-  .role-selector {
-    display: none;
-  }
-}
-
-
 /* Role Selector Dropdown */
-.role-selector {
+.role-selector-container {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -338,17 +312,166 @@ body.dark-mode .dropdown-divider {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   background: white;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  color: #333;
   transition: all 0.3s ease;
 }
 
-.role-selector:hover {
+.role-selector-container:hover {
   border-color: #d0d0d0;
   background: #f9f9f9;
 }
+
+.role-selector-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.role-selector-input {
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 600;
+  color: #667eea;
+  cursor: pointer;
+  outline: none;
+}
+
+.role-selector-input:hover {
+  color: #764ba2;
+}
+
+/* Dark Mode for Role Selector */
+body.dark-mode .role-selector-container {
+  background: #2a2a2a;
+  border-color: #333;
+}
+
+body.dark-mode .role-selector-container:hover {
+  background: #333;
+  border-color: #444;
+}
+
+body.dark-mode .role-selector-label {
+  color: #aaa;
+}
+
+body.dark-mode .role-selector-input {
+  color: #667eea;
+  background: transparent;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .header {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 12px;
+  }
+
+  .header-left {
+    width: 100%;
+    order: 1;
+  }
+
+  .header-title {
+    font-size: 18px;
+  }
+
+  .header-subtitle {
+    font-size: 12px;
+  }
+
+  .header-actions {
+    width: 100%;
+    order: 2;
+    gap: 8px;
+    margin-left: 0;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .role-selector-container {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+
+  .role-selector-label {
+    font-size: 10px;
+  }
+
+  .role-selector-input {
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+
+  .icon-button {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .notification-badge .badge {
+    width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
+
+  .user-profile-btn {
+    padding: 4px 8px;
+  }
+
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .header-title {
+    font-size: 16px;
+  }
+
+  .header-subtitle {
+    font-size: 11px;
+  }
+
+  .header-actions {
+    gap: 6px;
+  }
+
+  .role-selector-container {
+    font-size: 10px;
+    padding: 5px 6px;
+  }
+
+  .icon-button {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+  }
+
+  .user-avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+}
+
 
 .role-selector select {
   border: none;

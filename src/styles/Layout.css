@@ -50,6 +50,9 @@ body {
   flex-shrink: 0;
   background: white;
   border-bottom: 1px solid #f0f0f0;
+  position: relative;
+  z-index: 50;
+  overflow: visible;
 }
 
 /* Main Content Area */
@@ -61,6 +64,7 @@ body {
   flex-direction: column;
   width: 100%;
   min-height: 0;
+  position: relative;
 }
 
 /* Main Grid Layout (Content + Sidebar Right) */
@@ -148,30 +152,71 @@ body.dark-mode {
   }
 }
 
-/* Mobile Responsive */
+/* Tablet & Mobile Responsive */
 @media (max-width: 768px) {
   #root {
-    flex-direction: row;
+    flex-direction: column;
   }
 
   .app-container {
     margin-left: 0;
     margin-top: 60px;
+    width: 100vw;
+    height: calc(100vh - 60px);
+    overflow: hidden;
   }
 
   .sidebar {
     position: fixed;
-    bottom: 0;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto;
+    height: 60px;
     flex-direction: row;
     margin-left: 0;
+    z-index: 99;
+    padding: 0;
+  }
+
+  .sidebar-header {
+    padding: 8px 12px;
+    border-bottom: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+  }
+
+  .sidebar-title {
+    display: none;
   }
 
   .sidebar-menu {
+    display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    padding: 4px;
+    margin: 0;
+    margin-left: auto;
     gap: 0;
+    flex-wrap: nowrap;
+  }
+
+  .sidebar-menu-item {
+    padding: 8px 10px;
+    margin-bottom: 0;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .sidebar-footer {
+    display: none;
+  }
+
+  .app-header {
+    display: none;
+  }
+
+  .app-content {
+    overflow-y: auto;
+    overflow-x: hidden;
   }
 
   .content-wrapper {
@@ -181,7 +226,7 @@ body.dark-mode {
   }
 
   .right-sidebar {
-    grid-template-columns: 1fr;
+    display: none;
   }
 
   .header {
@@ -287,7 +332,28 @@ body.dark-mode {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
+/* Mobile Phone Responsive */
 @media (max-width: 480px) {
+  .app-container {
+    margin-top: 60px;
+    height: calc(100vh - 60px);
+  }
+
+  .sidebar-logo {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+
+  .sidebar-menu-item span {
+    display: none;
+  }
+
+  .sidebar-menu-item {
+    padding: 8px 8px;
+    font-size: 11px;
+  }
+
   .content-wrapper {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -312,15 +378,29 @@ body.dark-mode {
   }
 
   .summary-card {
-    padding: 12px;
+    padding: 14px 10px;
+  }
+
+  .card-title {
+    font-size: 11px;
   }
 
   .card-amount {
-    font-size: 20px;
+    font-size: 18px;
+    margin: 8px 0;
+  }
+
+  .card-footer {
+    font-size: 10px;
+    gap: 8px;
   }
 
   .charts-grid {
     grid-template-columns: 1fr;
+  }
+
+  .chart-container {
+    height: 250px;
   }
 }
 

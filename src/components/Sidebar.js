@@ -23,20 +23,20 @@ const Sidebar = ({ activeMenu, setActiveMenu }) => {
     { id: 'dashboard', label: 'Dashboard', icon: '📊' },
     { id: 'transactions', label: 'Transactions', icon: '💳' },
     { id: 'insights', label: 'Insights', icon: '📈' },
+    {/*
     { id: 'budgets', label: 'Budgets', icon: '💰' },
     { id: 'goals', label: 'Goals', icon: '🎯' },
     { id: 'reports', label: 'Reports', icon: '📋' },
-    { id: 'settings', label: 'Settings', icon: '⚙️' },
+    { id: 'settings', label: 'Settings', icon: '⚙️' }, */}
   ];
 
   return (
     <aside className="sidebar">
       {/* Sidebar Header with Logo */}
       <div className="sidebar-header">
-        <div className="sidebar-logo">MM</div>
+        <div className="sidebar-logo">FD</div>
         <div className="sidebar-title">
-          <h3>MoneyMate</h3>
-          <p>Smart Finance, Better Decisions</p>
+          <h3> Dashboard UI</h3>
         </div>
       </div>
 

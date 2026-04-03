@@ -39,92 +39,22 @@ const PlaceholderPage = ({ title, icon }) => (
  */
 function AppContent() {
   const [activeMenu, setActiveMenu] = useState('dashboard');
-  const [fullscreenComponent, setFullscreenComponent] = useState(null);
-  const { isAuthenticated, userRole } = useAuth();
-
-  // Fixed: Only toggle fullscreen when clicking on the component itself, not anywhere
-  const toggleFullscreen = (componentName, e) => {
-    // Prevent click propagation
-    e.stopPropagation();
-    setFullscreenComponent(fullscreenComponent === componentName ? null : componentName);
-  };
-
-  const exitFullscreen = () => {
-    setFullscreenComponent(null);
-  };
+  const { isAuthenticated } = useAuth();
 
   // If not authenticated, show login page
   if (!isAuthenticated) {
     return <Login />;
   }
 
-  // Render fullscreen viewer with click containment
-  if (fullscreenComponent) {
-    return (
-      <div className="fullscreen-viewer" onClick={exitFullscreen}>
-        <button 
-          className="fullscreen-exit-btn" 
-          onClick={exitFullscreen}
-          title="Exit fullscreen (ESC)"
-        >
-          ✕
-        </button>
-        <div 
-          className="app-container fullscreen-active"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <div className="app-content fullscreen-active">
-            <div className="content-wrapper fullscreen-active main-content">
-              {fullscreenComponent === 'dashboard' && <Dashboard />}
-              {fullscreenComponent === 'transactions' && <Transactions />}
-              {fullscreenComponent === 'insights' && <Insights />}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   // Function to render the active component
   const renderComponent = () => {
-    const handleComponentClick = (componentName) => (e) => {
-      // Only allow fullscreen for admin users
-      if (userRole === 'admin') {
-        toggleFullscreen(componentName, e);
-      }
-    };
-
     switch(activeMenu) {
       case 'dashboard':
-        return (
-          <div 
-            className="fullscreen-trigger"
-            onClick={handleComponentClick('dashboard')}
-            title={userRole === 'admin' ? 'Click to expand to fullscreen' : 'Read-only viewer'}
-          >
-            <Dashboard />
-          </div>
-        );
+        return <Dashboard />;
       case 'transactions':
-        return (
-          <div 
-            className="fullscreen-trigger"
-            onClick={handleComponentClick('transactions')}
-            title={userRole === 'admin' ? 'Click to expand to fullscreen' : 'Read-only viewer'}
-          >
-            <Transactions />
-          </div>
-        );
+        return <Transactions />;
       case 'insights':
-        return (
-          <div 
-            className="fullscreen-trigger"
-            onClick={handleComponentClick('insights')}
-            title={userRole === 'admin' ? 'Click to expand to fullscreen' : 'Read-only viewer'}
-          >
-            <Insights />
-          </div>
-        );
+        return <Insights />;
       case 'budgets':
         return <PlaceholderPage title="Budgets" icon="💰" />;
       case 'goals':

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../AuthContext';
-import './Login.css';
+import '../styles/Login.css';
 
 /**
  * Login Component
@@ -44,8 +44,8 @@ const Login = () => {
       <div className="login-wrapper">
         {/* Header */}
         <div className="login-header">
-          <div className="login-logo">💰</div>
-          <h1>MoneyMate</h1>
+          <div className="login-logo"></div>
+          <h1>Dashboard UI</h1>
           <p>Smart Finance Management</p>
         </div>
 
@@ -81,19 +81,17 @@ const Login = () => {
               <input
                 id="viewer-key"
                 type="password"
-                placeholder="Enter your viewer access key"
+                placeholder="Demo Key: viewer123"
                 value={viewerKey}
                 onChange={(e) => setViewerKey(e.target.value)}
                 disabled={loading}
               />
-              <small>📌 Demo key: viewer123</small>
+              
             </div>
             <button type="submit" disabled={loading} className="login-btn">
               {loading ? 'Logging in...' : 'Access Dashboard'}
             </button>
-            <p className="login-info">
-              📖 Viewer mode: Read-only access. You can view all data but cannot make changes.
-            </p>
+          
           </form>
         )}
 
@@ -105,31 +103,29 @@ const Login = () => {
               <input
                 id="admin-email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Demo Email: admin@gmail.com"
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
                 disabled={loading}
               />
-              <small>📌 Demo email: admin@example.com</small>
+              
             </div>
             <div className="form-group">
               <label htmlFor="admin-password">Password</label>
               <input
                 id="admin-password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Demo Password: admin123"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
                 disabled={loading}
               />
-              <small>📌 Demo password: admin123</small>
+              
             </div>
             <button type="submit" disabled={loading} className="login-btn">
               {loading ? 'Logging in...' : 'Login as Admin'}
             </button>
-            <p className="login-info">
-              🔐 Admin mode: Full access. You can view, edit, and delete data.
-            </p>
+          
           </form>
         )}
 
