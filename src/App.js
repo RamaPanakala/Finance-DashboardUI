@@ -6,6 +6,7 @@ import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import Transactions from './components/Transactions';
 import Insights from './components/Insights';
+import Settings from './components/Settings';
 import Login from './components/Login';
 import './App.css';
 
@@ -39,7 +40,7 @@ const PlaceholderPage = ({ title, icon }) => (
  */
 function AppContent() {
   const [activeMenu, setActiveMenu] = useState('dashboard');
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userRole } = useAuth();
 
   // If not authenticated, show login page
   if (!isAuthenticated) {
@@ -62,7 +63,7 @@ function AppContent() {
       case 'reports':
         return <PlaceholderPage title="Reports" icon="📋" />;
       case 'settings':
-        return <PlaceholderPage title="Settings" icon="⚙️" />;
+        return <Settings />;
       default:
         return <PlaceholderPage title="Dashboard" icon="📊" />;
     }
@@ -75,10 +76,10 @@ function AppContent() {
 
       {/* Main Application Container */}
       <div className="app-container">
-        {/* Top Navigation Header */}
-        <div className="app-header">
+        {/* Top Navigation Header - Hidden to save space */}
+        {/* <div className="app-header">
           <Header />
-        </div>
+        </div> */}
 
         {/* Main Content Area */}
         <div className="app-content">
@@ -110,10 +111,17 @@ function AppContent() {
 function App() {
   return (
     <AuthProvider>
-      <AppProvider>
-        <AppContent />
-      </AppProvider>
+      <AppContentWrapper />
     </AuthProvider>
+  );
+}
+
+function AppContentWrapper() {
+  const { userRole } = useAuth();
+  return (
+    <AppProvider userRole={userRole}>
+      <AppContent />
+    </AppProvider>
   );
 }
 

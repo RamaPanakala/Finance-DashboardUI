@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { useAppContext } from '../AppContext';
 import { convertCurrency, formatCurrency, formatWithConversion, getLocaleForCurrency } from '../utils/currencyUtils';
 import '../styles/Transactions.css';
@@ -36,6 +36,60 @@ const Transactions = () => {
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
   const [formData, setFormData] = useState({ date: '', amount: '', category: '', type: 'expense' });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const tableRef = useRef(null);
+
+  /**
+   * Calculate pagination
+   */
+  const paginatedTransactions = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return transactions.slice(startIndex, endIndex);
+  }, [transactions, currentPage, itemsPerPage]);
+
+  const totalPages = Math.ceil((transactions?.length || 0) / itemsPerPage);
+
+  /**
+   * Handle page change
+   */
+  const handlePageChange = (pageNum) => {
+    if (pageNum >= 1 && pageNum <= totalPages) {
+      setCurrentPage(pageNum);
+    }
+  };
+
+  /**
+   * Generate page numbers to display
+   */
+  const getPageNumbers = () => {
+    const pages = [];
+    const maxVisible = 5;
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    return pages;
+  };
 
   /**
    * Handle form submission for adding/editing transactions
@@ -94,6 +148,53 @@ const Transactions = () => {
     return amount > 0 ? 'positive' : 'negative';
   };
 
+  /**
+   * Calculate monthly comparison data
+   */
+  const calculateMonthlyComparison = () => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const currentMonthTransactions = (transactions || []).filter(t => {
+      const tDate = new Date(t.date);
+      return tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear;
+    });
+
+    const previousMonthTransactions = (transactions || []).filter(t => {
+      const tDate = new Date(t.date);
+      return tDate.getMonth() === previousMonth && tDate.getFullYear() === previousYear;
+    });
+
+    const currentIncome = currentMonthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const previousIncome = previousMonthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+
+    const currentExpenses = currentMonthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    const previousExpenses = previousMonthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+    return {
+      currentMonth: monthNames[currentMonth],
+      previousMonth: monthNames[previousMonth],
+      currentIncome,
+      previousIncome,
+      currentExpenses,
+      previousExpenses,
+      currentBalance: currentIncome - currentExpenses,
+      previousBalance: previousIncome - previousExpenses,
+    };
+  };
+
+  const monthlyData = calculateMonthlyComparison();
+
+  const formatAmount = (amount) => {
+    const converted = convertCurrency(amount, 'USD', currency, exchangeRates);
+    return formatCurrency(converted, currency, getLocaleForCurrency(currency));
+  };
+
   return (
     <div className="transactions-container">
       {/* Header with Title and Controls */}
@@ -135,6 +236,75 @@ const Transactions = () => {
               {showForm ? '✕ Cancel' : '✓ Add Transaction'}
             </button>
           )}
+        </div>
+      </div>
+
+      {/* Monthly Comparison Cards */}
+      <div className="monthly-comparison">
+        <div className="comparison-header">
+          <h3>📊 Monthly Comparison</h3>
+          <span className="comparison-period">{monthlyData.previousMonth} vs {monthlyData.currentMonth}</span>
+        </div>
+        <div className="comparison-grid">
+          <div className="comparison-card income">
+            <div className="comparison-card-label">Income</div>
+            <div className="comparison-values">
+              <div className="prev-month">
+                <span className="label">{monthlyData.previousMonth}</span>
+                <span className="amount">{formatAmount(monthlyData.previousIncome)}</span>
+              </div>
+              <div className="current-month">
+                <span className="label">{monthlyData.currentMonth}</span>
+                <span className="amount">{formatAmount(monthlyData.currentIncome)}</span>
+              </div>
+            </div>
+            <div className="comparison-change">
+              {monthlyData.previousIncome !== 0 ? 
+                `${monthlyData.currentIncome > monthlyData.previousIncome ? '↑' : '↓'} ${Math.abs(((monthlyData.currentIncome - monthlyData.previousIncome) / monthlyData.previousIncome * 100).toFixed(1))}%` 
+                : (monthlyData.currentIncome > 0 ? '↑ +100%' : 'No change')
+              }
+            </div>
+          </div>
+
+          <div className="comparison-card expense">
+            <div className="comparison-card-label">Expenses</div>
+            <div className="comparison-values">
+              <div className="prev-month">
+                <span className="label">{monthlyData.previousMonth}</span>
+                <span className="amount">{formatAmount(monthlyData.previousExpenses)}</span>
+              </div>
+              <div className="current-month">
+                <span className="label">{monthlyData.currentMonth}</span>
+                <span className="amount">{formatAmount(monthlyData.currentExpenses)}</span>
+              </div>
+            </div>
+            <div className="comparison-change">
+              {monthlyData.previousExpenses !== 0 ? 
+                `${monthlyData.currentExpenses > monthlyData.previousExpenses ? '↑' : '↓'} ${Math.abs(((monthlyData.currentExpenses - monthlyData.previousExpenses) / monthlyData.previousExpenses * 100).toFixed(1))}%` 
+                : (monthlyData.currentExpenses > 0 ? '↑ +100%' : 'No change')
+              }
+            </div>
+          </div>
+
+          <div className="comparison-card balance">
+            <div className="comparison-card-label">Balance</div>
+            <div className="comparison-values">
+              <div className="prev-month">
+                <span className="label">{monthlyData.previousMonth}</span>
+                <span className="amount">{formatAmount(monthlyData.previousBalance)}</span>
+              </div>
+              <div className="current-month">
+                <span className="label">{monthlyData.currentMonth}</span>
+                <span className="amount">{formatAmount(monthlyData.currentBalance)}</span>
+              </div>
+            </div>
+            <div className="comparison-change">
+              {monthlyData.previousBalance !== 0 ? 
+                `${monthlyData.currentBalance > monthlyData.previousBalance ? '↑' : '↓'} ${Math.abs(((monthlyData.currentBalance - monthlyData.previousBalance) / Math.abs(monthlyData.previousBalance) * 100).toFixed(1))}%` 
+                : (monthlyData.currentBalance > 0 ? '↑ +100%' : 'No change')
+              }
+            </div>
+          </div>
         </div>
       </div>
 
@@ -200,8 +370,8 @@ const Transactions = () => {
           </tr>
         </thead>
         <tbody>
-          {transactions && transactions.length > 0 ? (
-            transactions.map((transaction) => (
+          {paginatedTransactions && paginatedTransactions.length > 0 ? (
+            paginatedTransactions.map((transaction) => (
               <tr key={transaction.id}>
                 <td className="transaction-date">{transaction.date}</td>
                 <td className="transaction-description">
@@ -258,13 +428,39 @@ const Transactions = () => {
       {/* Pagination */}
       {transactions && transactions.length > 0 && (
         <div className="pagination">
-          <span>Showing <strong>5</strong> per page</span>
+          <span className="pagination-info">
+            Showing <strong>{((currentPage - 1) * itemsPerPage) + 1}</strong> to <strong>{Math.min(currentPage * itemsPerPage, transactions.length)}</strong> of <strong>{transactions.length}</strong> transactions ({itemsPerPage} per page)
+          </span>
           <div className="pagination-controls">
-            <button className="pagination-btn">‹</button>
-            <button className="pagination-btn active">1</button>
-            <button className="pagination-btn">2</button>
-            <button className="pagination-btn">3</button>
-            <button className="pagination-btn">›</button>
+            {/* Previous Button */}
+            <button
+              className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              ‹ 
+            </button>
+
+            {/* Page Numbers */}
+            {getPageNumbers().map((pageNum, index) => (
+              <button
+                key={index}
+                className={`pagination-btn ${pageNum === currentPage ? 'active' : ''} ${pageNum === '...' ? 'ellipsis' : ''}`}
+                onClick={() => typeof pageNum === 'number' && handlePageChange(pageNum)}
+                disabled={pageNum === '...'}
+              >
+                {pageNum}
+              </button>
+            ))}
+
+            {/* Next Button */}
+            <button
+              className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+               ›
+            </button>
           </div>
         </div>
       )}

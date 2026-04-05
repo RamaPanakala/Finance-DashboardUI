@@ -91,21 +91,43 @@ export const AuthProvider = ({ children }) => {
       // });
       // const data = await response.json();
       
-      // Temporary mock implementation
+      // Mock implementation - check default admin or registered admins
+      let adminValid = false;
+      let adminData = null;
+
+      // Check default admin
       if (email === 'admin@gmail.com' && password === 'admin123') {
-        const adminUser = {
+        adminValid = true;
+        adminData = {
           id: 'admin-1',
           name: 'Admin User',
           email: email,
           role: 'admin',
           canEdit: true
         };
+      } else {
+        // Check registered admins in localStorage
+        const adminsList = JSON.parse(localStorage.getItem('adminsList') || '[]');
+        const registeredAdmin = adminsList.find(admin => admin.email === email && admin.password === password);
+        if (registeredAdmin) {
+          adminValid = true;
+          adminData = {
+            id: registeredAdmin.id,
+            name: registeredAdmin.name,
+            email: registeredAdmin.email,
+            role: 'admin',
+            canEdit: true
+          };
+        }
+      }
+
+      if (adminValid && adminData) {
         const mockToken = 'admin-token-' + Date.now();
         
-        setUser(adminUser);
+        setUser(adminData);
         setUserRole('admin');
         setIsAuthenticated(true);
-        localStorage.setItem('user', JSON.stringify(adminUser));
+        localStorage.setItem('user', JSON.stringify(adminData));
         localStorage.setItem('authToken', mockToken);
       } else {
         throw new Error('Invalid email or password');

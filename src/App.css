@@ -5,6 +5,7 @@
 */
 
 /* Import all modular stylesheets */
+@import './styles/Animations.css';
 @import './styles/Layout.css';
 @import './styles/Sidebar.css';
 @import './styles/Header.css';

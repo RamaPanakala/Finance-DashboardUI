@@ -43,6 +43,18 @@ body {
   height: 100vh;
   width: calc(100vw - 250px);
   overflow: hidden;
+  animation: containerSlideIn 0.4s ease;
+}
+
+@keyframes containerSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 /* Header Section */
@@ -108,33 +120,67 @@ body {
 .app-content::-webkit-scrollbar-thumb {
   background: #d0d0d0;
   border-radius: 4px;
+  transition: background 0.3s ease;
 }
 
 .app-content::-webkit-scrollbar-thumb:hover {
-  background: #aaa;
+  background: #999999;
 }
 
 /* Dark Mode */
+:root {
+  --bg-page: #f5f5f5;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f9f9f9;
+  --border: rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.1);
+  --text-primary: #1a1a1a;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+}
+
 body.dark-mode {
-  background: #121212;
-  color: #fff;
+  --bg-page: #0d1117;
+  --bg-card: #161b22;
+  --bg-card-hover: #21262d;
+  --border: rgba(255, 255, 255, 0.1);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --text-primary: #e6edf3;
+  --text-secondary: #8b949e;
+  --text-muted: #6e7681;
+  background: #0d1117;
+  color: #e6edf3;
 }
 
-.dark-mode .app-container {
-  background: #121212;
+body.dark-mode .app-container {
+  background: #0d1117;
 }
 
-.dark-mode .app-header {
-  background: #1e1e1e;
-  border-bottom-color: #333;
+body.dark-mode .app-header {
+  background: #161b22;
+  border-bottom-color: #30363d;
 }
 
-.dark-mode .app-content {
-  background: #121212;
+body.dark-mode .app-content {
+  background: #0d1117;
 }
 
-.dark-mode .content-wrapper {
-  background: #121212;
+body.dark-mode .content-wrapper {
+  background: #0d1117;
+}
+
+body.dark-mode .app-content::-webkit-scrollbar-track {
+  background: #0d1117;
+}
+
+body.dark-mode .app-content::-webkit-scrollbar-thumb {
+  background: #21262d;
+}
+
+body.dark-mode .app-content::-webkit-scrollbar-thumb:hover {
+  background: #30363d;
 }
 
 /* Tablet/iPad Responsive */
@@ -161,9 +207,20 @@ body.dark-mode {
   .app-container {
     margin-left: 0;
     margin-top: 60px;
-    width: 100vw;
+    width: 100%;
     height: calc(100vh - 60px);
     overflow: hidden;
+  }
+
+  .app-content {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .content-wrapper {
+    gap: 12px;
+    padding: 12px;
   }
 
   .sidebar {

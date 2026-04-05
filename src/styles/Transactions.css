@@ -1,4 +1,30 @@
-/* Transactions.css — Professional Edition */
+/* Transactions.css — Professional Edition with Enhanced Animations */
+
+:root {
+  --bg-page: #f4f5f8;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fafbff;
+  --border: rgba(0, 0, 0, 0.07);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.1);
+  --text-primary: #0f1117;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --radius-card: 16px;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-mode {
+  --bg-page: #0d0f14;
+  --bg-card: #161a22;
+  --bg-card-hover: #1c2130;
+  --border: rgba(255, 255, 255, 0.07);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 24px rgba(0, 0, 0, 0.5);
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+}
 
 .transactions-container {
   background: var(--bg-card);
@@ -7,11 +33,36 @@
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border);
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   min-width: 0;
   animation: cardRise 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.1s both;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: all var(--transition);
+  overflow: hidden;
+}
+
+@keyframes cardRise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.transactions-container:hover {
+  box-shadow: var(--shadow-md);
+}
+
+@media (max-width: 768px) {
+  .transactions-container {
+    height: calc(100vh - 20px);
+    border-radius: 8px;
+    padding: 16px;
+  }
 }
 
 /* ── Header ───────────────────────────────────────────────────── */
@@ -36,6 +87,146 @@
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* ── Monthly Comparison ──────────────────────────────────────── */
+.monthly-comparison {
+  margin-bottom: 28px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  border-radius: 14px;
+  animation: fadeInUp 0.4s ease 0.1s both;
+}
+
+.comparison-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.comparison-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.comparison-period {
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.5);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.comparison-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.25s ease;
+}
+
+.comparison-card:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
+}
+
+.comparison-card.income {
+  border-left: 4px solid #10b981;
+}
+
+.comparison-card.expense {
+  border-left: 4px solid #ef4444;
+}
+
+.comparison-card.balance {
+  border-left: 4px solid #6366f1;
+}
+
+.comparison-card-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.comparison-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.prev-month, .current-month {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.comparison-values .label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.comparison-values .amount {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.comparison-change {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  background: rgba(99, 102, 241, 0.1);
+  border-radius: 8px;
+  color: #6366f1;
+  text-align: center;
+}
+
+.comparison-card.income .comparison-change {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.comparison-card.expense .comparison-change {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+.dark-mode .comparison-period {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 768px) {
+  .monthly-comparison {
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .comparison-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .comparison-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
 }
 
 /* ── Search / Filter ──────────────────────────────────────────── */
@@ -88,9 +279,21 @@
   align-items: center;
   gap: 6px;
   white-space: nowrap;
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
-              box-shadow 0.22s ease, filter 0.22s ease;
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
   box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-add-transaction::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
 }
 
 .btn-add-transaction:hover {
@@ -99,7 +302,13 @@
   filter: brightness(1.05);
 }
 
-.btn-add-transaction:active { transform: scale(0.97); }
+.btn-add-transaction:hover::before {
+  left: 100%;
+}
+
+.btn-add-transaction:active {
+  transform: scale(0.97);
+}
 
 /* ── Table ────────────────────────────────────────────────────── */
 .transactions-table {
@@ -129,26 +338,33 @@
 /* Row entrance animation */
 .transactions-table tbody tr {
   border-bottom: 1px solid var(--border);
-  transition: background 0.18s ease, transform 0.18s ease;
-  animation: rowSlideIn 0.35s ease both;
+  transition: all 0.18s ease;
+  animation: rowSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-.transactions-table tbody tr:nth-child(1) { animation-delay: 0.05s; }
-.transactions-table tbody tr:nth-child(2) { animation-delay: 0.08s; }
-.transactions-table tbody tr:nth-child(3) { animation-delay: 0.11s; }
-.transactions-table tbody tr:nth-child(4) { animation-delay: 0.14s; }
-.transactions-table tbody tr:nth-child(5) { animation-delay: 0.17s; }
-.transactions-table tbody tr:nth-child(6) { animation-delay: 0.20s; }
-.transactions-table tbody tr:nth-child(7) { animation-delay: 0.23s; }
-.transactions-table tbody tr:nth-child(8) { animation-delay: 0.26s; }
+.transactions-table tbody tr:nth-child(1) { animation-delay: 0.08s; }
+.transactions-table tbody tr:nth-child(2) { animation-delay: 0.12s; }
+.transactions-table tbody tr:nth-child(3) { animation-delay: 0.16s; }
+.transactions-table tbody tr:nth-child(4) { animation-delay: 0.20s; }
+.transactions-table tbody tr:nth-child(5) { animation-delay: 0.24s; }
+.transactions-table tbody tr:nth-child(6) { animation-delay: 0.28s; }
+.transactions-table tbody tr:nth-child(7) { animation-delay: 0.32s; }
+.transactions-table tbody tr:nth-child(8) { animation-delay: 0.36s; }
 
 @keyframes rowSlideIn {
-  from { opacity: 0; transform: translateX(-8px); }
-  to   { opacity: 1; transform: translateX(0);    }
+  from {
+    opacity: 0;
+    transform: translateX(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .transactions-table tbody tr:hover {
   background: var(--bg-card-hover);
+  transform: translateX(4px);
 }
 
 .transactions-table tbody tr:last-child { border-bottom: none; }
@@ -171,9 +387,21 @@
   border-radius: 20px;
   font-size: 11.5px;
   font-weight: 600;
-  transition: transform 0.2s ease, filter 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: badgePulse 0.5s ease;
 }
-.category-badge:hover { transform: scale(1.05); filter: brightness(1.05); }
+
+@keyframes badgePulse {
+  0% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.category-badge:hover {
+  transform: scale(1.08);
+  filter: brightness(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
 
 .category-badge.food          { background: rgba(245,158,11,0.12); color: #d97706; }
 .category-badge.income        { background: rgba(16,185,129,0.12);  color: #059669; }

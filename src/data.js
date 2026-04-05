@@ -1,17 +1,51 @@
-export const mockTransactions = [
-  { id: 1, date: '2023-01-01', amount: 5000, category: 'Salary', type: 'income' },
-  { id: 2, date: '2023-01-02', amount: -200, category: 'Groceries', type: 'expense' },
-  { id: 3, date: '2023-01-03', amount: -100, category: 'Transport', type: 'expense' },
-  { id: 4, date: '2023-01-04', amount: 1000, category: 'Freelance', type: 'income' },
-  { id: 5, date: '2023-01-05', amount: -50, category: 'Entertainment', type: 'expense' },
-  { id: 6, date: '2023-02-01', amount: 5000, category: 'Salary', type: 'income' },
-  { id: 7, date: '2023-02-02', amount: -300, category: 'Groceries', type: 'expense' },
-  { id: 8, date: '2023-02-03', amount: -150, category: 'Transport', type: 'expense' },
-  { id: 9, date: '2023-02-04', amount: -200, category: 'Utilities', type: 'expense' },
-  { id: 10, date: '2023-02-05', amount: -100, category: 'Entertainment', type: 'expense' },
-  { id: 11, date: '2023-03-01', amount: 5000, category: 'Salary', type: 'income' },
-  { id: 12, date: '2023-03-02', amount: -250, category: 'Groceries', type: 'expense' },
-  { id: 13, date: '2023-03-03', amount: -120, category: 'Transport', type: 'expense' },
-  { id: 14, date: '2023-03-04', amount: -180, category: 'Utilities', type: 'expense' },
-  { id: 15, date: '2023-03-05', amount: -80, category: 'Entertainment', type: 'expense' },
-];
+// Generate 500+ dummy transactions spanning 12 months
+const generateDummyTransactions = () => {
+  const transactions = [];
+  const categories = ['Salary', 'Freelance', 'Groceries', 'Transport', 'Utilities', 'Entertainment', 'Shopping', 'Food & Dining', 'Healthcare', 'Insurance'];
+  const expenses = ['Groceries', 'Transport', 'Utilities', 'Entertainment', 'Shopping', 'Food & Dining', 'Healthcare', 'Insurance'];
+  const income = ['Salary', 'Freelance', 'Bonus', 'Investment', 'Interest'];
+  
+  let id = 1;
+  const startDate = new Date('2023-01-01');
+  const endDate = new Date('2023-12-31');
+  
+  // Generate daily transactions
+  for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+    const currentDate = new Date(date);
+    const dateStr = currentDate.toISOString().split('T')[0];
+    
+    // 2-4 transactions per day
+    const txCount = Math.floor(Math.random() * 3) + 2;
+    
+    for (let i = 0; i < txCount; i++) {
+      // 30% chance of income, 70% expense
+      if (Math.random() < 0.3) {
+        // Income transaction
+        const incomeCategory = income[Math.floor(Math.random() * income.length)];
+        const amount = Math.floor(Math.random() * 500) + 200;
+        transactions.push({
+          id: id++,
+          date: dateStr,
+          amount: amount,
+          category: incomeCategory,
+          type: 'income'
+        });
+      } else {
+        // Expense transaction
+        const expenseCategory = expenses[Math.floor(Math.random() * expenses.length)];
+        const amount = -(Math.floor(Math.random() * 100) + 5);
+        transactions.push({
+          id: id++,
+          date: dateStr,
+          amount: amount,
+          category: expenseCategory,
+          type: 'expense'
+        });
+      }
+    }
+  }
+  
+  return transactions;
+};
+
+export const mockTransactions = generateDummyTransactions();

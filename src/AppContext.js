@@ -5,14 +5,23 @@ const AppContext = createContext();
 
 export const useAppContext = () => useContext(AppContext);
 
-export const AppProvider = ({ children }) => {
+export const AppProvider = ({ children, userRole = 'viewer' }) => {
   const [transactions, setTransactions] = useState(() => {
     const saved = localStorage.getItem('transactions');
     return saved ? JSON.parse(saved) : mockTransactions;
   });
-  const [role, setRole] = useState('Viewer'); // 'Viewer' or 'Admin'
+  // Role synced from AuthContext - capitalize for display purposes
+  const [role, setRole] = useState(userRole === 'admin' ? 'Admin' : 'Viewer');
+  
+  // Sync role when userRole changes
+  useEffect(() => {
+    setRole(userRole === 'admin' ? 'Admin' : 'Viewer');
+  }, [userRole]);
   const [filters, setFilters] = useState({ category: '', type: '', search: '' });
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('darkMode');
+    return saved ? JSON.parse(saved) : false;
+  });
   const [currency, setCurrency] = useState(() => {
     const saved = localStorage.getItem('preferredCurrency');
     return saved || 'USD';
@@ -29,6 +38,17 @@ export const AppProvider = ({ children }) => {
     INR: 83.12,
     MXN: 17.05,
   });
+
+  // Apply dark mode to document body
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add('dark-mode');
+      localStorage.setItem('darkMode', 'true');
+    } else {
+      document.body.classList.remove('dark-mode');
+      localStorage.setItem('darkMode', 'false');
+    }
+  }, [darkMode]);
 
   useEffect(() => {
     localStorage.setItem('transactions', JSON.stringify(transactions));

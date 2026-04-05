@@ -62,6 +62,7 @@ const Dashboard = () => {
     totalExpenses,
     spendingByCategory,
     balanceTrend,
+    allTransactions,
     darkMode,
     currency,
     exchangeRates,
@@ -74,6 +75,48 @@ const Dashboard = () => {
     const converted = convertCurrency(amount, 'USD', currency, exchangeRates);
     return formatCurrency(converted, currency, getLocaleForCurrency(currency));
   };
+
+  /**
+   * Calculate month-over-month change percentage
+   */
+  const calculateMonthlyChange = () => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+    const currentMonthTransactions = (allTransactions || []).filter(t => {
+      const tDate = new Date(t.date);
+      return tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear;
+    });
+
+    const previousMonthTransactions = (allTransactions || []).filter(t => {
+      const tDate = new Date(t.date);
+      return tDate.getMonth() === previousMonth && tDate.getFullYear() === previousYear;
+    });
+
+    const currentIncome = currentMonthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const previousIncome = previousMonthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+
+    const currentExpenses = currentMonthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    const previousExpenses = previousMonthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+    const currentBalance = currentIncome - currentExpenses;
+    const previousBalance = previousIncome - previousExpenses;
+
+    const incomeChange = previousIncome !== 0 ? ((currentIncome - previousIncome) / previousIncome * 100).toFixed(1) : (currentIncome > 0 ? 100 : 0);
+    const expenseChange = previousExpenses !== 0 ? ((currentExpenses - previousExpenses) / previousExpenses * 100).toFixed(1) : (currentExpenses > 0 ? 100 : 0);
+    const balanceChange = previousBalance !== 0 ? ((currentBalance - previousBalance) / Math.abs(previousBalance) * 100).toFixed(1) : (currentBalance > 0 ? 100 : 0);
+
+    return {
+      incomeChange: parseFloat(incomeChange),
+      expenseChange: parseFloat(expenseChange),
+      balanceChange: parseFloat(balanceChange)
+    };
+  };
+
+  const changes = calculateMonthlyChange();
 
   /* Pie / Donut data */
   const pieData = Object.keys(spendingByCategory).map((cat) => ({
@@ -93,8 +136,8 @@ const Dashboard = () => {
       value: formatAmount(totalBalance),
       icon: '💳',
       iconClass: 'blue',
-      change: '+12.5%',
-      dir: 'up',
+      change: `${changes.balanceChange >= 0 ? '+' : ''}${changes.balanceChange.toFixed(1)}%`,
+      dir: changes.balanceChange >= 0 ? 'up' : 'down',
       accent: '#6366f1',
     },
     {
@@ -102,8 +145,8 @@ const Dashboard = () => {
       value: formatAmount(totalIncome),
       icon: '📈',
       iconClass: 'green',
-      change: '+8.3%',
-      dir: 'up',
+      change: `${changes.incomeChange >= 0 ? '+' : ''}${changes.incomeChange.toFixed(1)}%`,
+      dir: changes.incomeChange >= 0 ? 'up' : 'down',
       accent: '#10b981',
     },
     {
@@ -111,8 +154,8 @@ const Dashboard = () => {
       value: formatAmount(totalExpenses),
       icon: '💸',
       iconClass: 'red',
-      change: '-5.2%',
-      dir: 'down',
+      change: `${changes.expenseChange >= 0 ? '+' : ''}${changes.expenseChange.toFixed(1)}%`,
+      dir: changes.expenseChange >= 0 ? 'up' : 'down',
       accent: '#ef4444',
     },
   ];

@@ -88,12 +88,12 @@ const Header = () => {
             {userRole === 'admin' ? '🔐 Admin' : '👁️ Viewer'}
           </div>
           */}
-          {/* Currency Selector */}
+          {/* Currency Selector 
           <CurrencySelector 
             currentCurrency={currency} 
             onCurrencyChange={setCurrency}
           />
-
+            */}
           {/* Dark Mode Toggle */}
           <button
             className={`icon-button theme-toggle ${darkMode ? 'active' : ''}`}
@@ -103,14 +103,14 @@ const Header = () => {
             {darkMode ? '☀️' : '🌙'}
           </button>
 
-          {/* Notifications Bell */}
+          {/* Notifications Bell 
           <div className="notification-badge">
             <button className="icon-button" title="Notifications">
               🔔
             </button>
             <span className="badge">3</span>
           </div>
-
+*/}
           {/* User Profile Dropdown */}
           <div className="user-menu">
             <button
@@ -125,34 +125,21 @@ const Header = () => {
               </div>
               <span className={`dropdown-arrow ${showDropdown ? 'open' : ''}`}>▼</span>
             </button>
+{/* Profile Dropdown Menu */}
+{showDropdown && (
+  <div className="user-dropdown-menu">
+    
 
-            {/* Profile Dropdown Menu */}
-            {showDropdown && (
-              <div className="user-dropdown-menu">
-                <button 
-                  className="dropdown-item"
-                  onClick={() => {
-                    setShowProfile(true);
-                    setShowDropdown(false);
-                  }}
-                >
-                  👤 My Profile
-                </button>
-                <button 
-                  className="dropdown-item"
-                  onClick={() => setShowDropdown(false)}
-                >
-                  ⚙️ Settings
-                </button>
-                <div className="dropdown-divider"></div>
-                <button 
-                  className="dropdown-item logout"
-                  onClick={handleLogout}
-                >
-                  🚪 Logout
-                </button>
-              </div>
-            )}
+    <div className="dropdown-divider"></div>
+
+    <button 
+      className="dropdown-item logout"
+      onClick={handleLogout}
+    >
+      🚪 Logout
+    </button>
+  </div>
+)}
           </div>
         </div>
       </header>

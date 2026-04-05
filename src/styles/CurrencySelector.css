@@ -199,6 +199,82 @@ body.dark-mode .currency-item:hover {
   background: #2a2a2a;
 }
 
+/* Responsive Design */
+@media (max-width: 768px) {
+  .currency-dropdown {
+    min-width: 280px;
+    max-height: 350px;
+  }
+
+  .currency-button {
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+
+  .currency-flag {
+    font-size: 16px;
+  }
+
+  .currency-code {
+    min-width: 35px;
+    font-size: 11px;
+  }
+
+  .currency-item {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .currency-item .currency-flag {
+    font-size: 18px;
+    min-width: 24px;
+  }
+
+  .currency-item .currency-code {
+    font-size: 12px;
+  }
+
+  .currency-name {
+    font-size: 11px;
+  }
+
+  .currency-symbol {
+    font-size: 11px;
+    min-width: 35px;
+  }
+}
+
+@media (max-width: 480px) {
+  .currency-dropdown {
+    min-width: 250px;
+    max-height: 300px;
+  }
+
+  .currency-button {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .currency-flag {
+    font-size: 14px;
+  }
+
+  .currency-code {
+    min-width: 30px;
+    font-size: 10px;
+  }
+
+  .currency-item {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .currency-header {
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+}
+
 body.dark-mode .currency-item.active {
   background: rgba(102, 126, 234, 0.15);
   color: #667eea;

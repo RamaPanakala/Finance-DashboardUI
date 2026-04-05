@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../AuthContext';
+import { useAppContext } from '../AppContext';
 import '../styles/Profile.css';
 
 /**
@@ -8,7 +9,8 @@ import '../styles/Profile.css';
  * Fields: Name, Email, Phone Number
  */
 const Profile = ({ onClose }) => {
-  const { user, updateProfile, loading } = useAuth();
+  const { user, updateProfile, loading, setUserRole, userRole } = useAuth();
+  const { role, setRole } = useAppContext();
   const [formData, setFormData] = useState({
     name: user?.name || '',
     email: user?.email || '',
@@ -17,6 +19,11 @@ const Profile = ({ onClose }) => {
   const [isEditing, setIsEditing] = useState(!user?.name);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [showCredentialModal, setShowCredentialModal] = useState(false);
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
+  const [credentialError, setCredentialError] = useState('');
+  const [credentialLoading, setCredentialLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,6 +31,65 @@ const Profile = ({ onClose }) => {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleRoleChange = (e) => {
+    const newRole = e.target.value;
+    
+    // If switching to Admin, show credential modal
+    if (newRole === 'Admin') {
+      setShowCredentialModal(true);
+      setCredentialError('');
+      setAdminEmail('');
+      setAdminPassword('');
+    } else {
+      // Switching to Viewer - no credentials needed
+      setRole('Viewer');
+      const roleValue = 'viewer';
+      setUserRole(roleValue);
+      
+      if (user) {
+        const updatedUser = { ...user, role: roleValue };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+    }
+  };
+
+  const handleCredentialSubmit = async (e) => {
+    e.preventDefault();
+    setCredentialError('');
+    setCredentialLoading(true);
+
+    // Validate credentials (mock implementation - replace with actual backend call)
+    if (adminEmail === 'admin@example.com' && adminPassword === 'admin123') {
+      // Credentials correct - switch to Admin
+      setRole('Admin');
+      const roleValue = 'admin';
+      setUserRole(roleValue);
+      
+      if (user) {
+        const updatedUser = { ...user, role: roleValue };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      }
+      
+      setShowCredentialModal(false);
+      setAdminEmail('');
+      setAdminPassword('');
+      setSuccess('Role switched to Admin successfully!');
+      setTimeout(() => setSuccess(''), 3000);
+    } else {
+      // Invalid credentials
+      setCredentialError('Invalid email or password');
+    }
+    
+    setCredentialLoading(false);
+  };
+
+  const handleModalClose = () => {
+    setShowCredentialModal(false);
+    setAdminEmail('');
+    setAdminPassword('');
+    setCredentialError('');
   };
 
   const handleSubmit = async (e) => {
@@ -92,30 +158,57 @@ const Profile = ({ onClose }) => {
             </div>
             <div className="profile-details">
               <h3>User Information</h3>
+              
+              {/* Always Show: Name */}
               <div className="info-row">
                 <label>Name:</label>
                 <p>{user?.name || 'Not set'}</p>
               </div>
+
+              {/* Show if Admin: Email and Phone */}
+              {role === 'Admin' && (
+                <>
+                  <div className="info-row admin-section">
+                    <label>Admin Email:</label>
+                    <p>{user?.email || 'Not set'}</p>
+                  </div>
+                  <div className="info-row admin-section">
+                    <label>Phone:</label>
+                    <p>{user?.phone || 'Not set'}</p>
+                  </div>
+                </>
+              )}
+
+              {/* Current Role Display */}
               <div className="info-row">
-                <label>Email:</label>
-                <p>{user?.email || 'Not set'}</p>
-              </div>
-              <div className="info-row">
-                <label>Phone:</label>
-                <p>{user?.phone || 'Not set'}</p>
-              </div>
-              <div className="info-row">
-                <label>Role:</label>
-                <p className={`role-badge ${user?.role}`}>
-                  {user?.role === 'admin' ? '🔐 Admin' : '👁️ Viewer'}
+                <label>Current Role:</label>
+                <p className={`role-badge ${role?.toLowerCase()}`}>
+                  {role === 'Admin' ? '🔐 Admin' : '👁️ Viewer'}
                 </p>
               </div>
-              <button 
-                className="profile-edit-btn"
-                onClick={() => setIsEditing(true)}
-              >
-                ✏️ Edit Profile
-              </button>
+
+              {/* Switch Role */}
+              <div className="info-row">
+                <label>Switch Role:</label>
+                <select
+                  value={role || 'Viewer'}
+                  onChange={handleRoleChange}
+                  className="role-selector-input"
+                >
+                  <option value="Viewer">Viewer</option>
+                  <option value="Admin">Admin</option>
+                </select>
+              </div>
+
+              {/* Show only for Admin: Edit button */}
+              {role === 'Admin' && (
+                <button 
+                  className="profile-edit-btn"
+                  onClick={() => setIsEditing(true)}
+                >
+                  ✏️ Edit Profile
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -181,6 +274,76 @@ const Profile = ({ onClose }) => {
             </div>
           </form>
         )}
+
+      {/* Credential Modal */}
+      {showCredentialModal && (
+        <div className="profile-modal-overlay" onClick={handleModalClose}>
+          <div className="profile-credential-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="profile-modal-header">
+              <h3>🔐 Admin Access Required</h3>
+              <button 
+                className="profile-close-btn"
+                onClick={handleModalClose}
+              >
+                ✕
+              </button>
+            </div>
+            
+            {credentialError && (
+              <div className="profile-error">
+                <span>⚠️</span>
+                <p>{credentialError}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleCredentialSubmit} className="profile-form">
+              <div className="form-group">
+                <label htmlFor="admin-email">Admin Email</label>
+                <input
+                  id="admin-email"
+                  type="email"
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  placeholder="admin@example.com"
+                  disabled={credentialLoading}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="admin-password">Admin Password</label>
+                <input
+                  id="admin-password"
+                  type="password"
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  placeholder="Enter password"
+                  disabled={credentialLoading}
+                  required
+                />
+              </div>
+
+              <div className="form-actions">
+                <button 
+                  type="button"
+                  className="profile-cancel-btn"
+                  onClick={handleModalClose}
+                  disabled={credentialLoading}
+                >
+                  Cancel
+                </button>
+                <button 
+                  type="submit"
+                  className="profile-save-btn"
+                  disabled={credentialLoading}
+                >
+                  {credentialLoading ? 'Verifying...' : 'Verify & Switch'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
       </div>
     </div>
   );
