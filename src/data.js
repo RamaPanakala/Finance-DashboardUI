@@ -1,8 +1,6 @@
 // Generate 80+ dummy transactions with LOW money amounts - March & April 2026
 const generateDummyTransactions = () => {
   const transactions = [];
-  const expenses = ['Groceries', 'Transport', 'Utilities', 'Entertainment', 'Shopping', 'Food & Dining', 'Healthcare', 'Insurance', 'Phone Bill', 'Internet', 'Coffee', 'Snacks', 'Parking', 'Gas', 'Books', 'Subscription'];
-  const income = ['Freelance', 'Tutoring', 'Gigs', 'Part-time'];
   
   let id = 1;
 

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAppContext } from '../AppContext';
 import { useAuth } from '../AuthContext';
 import { convertCurrency, formatCurrency, getLocaleForCurrency } from '../utils/currencyUtils';
-import CurrencySelector from './CurrencySelector';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import '../styles/Settings.css';
@@ -24,6 +23,7 @@ const Settings = () => {
     darkMode, 
     setDarkMode, 
     currency, 
+    
     exchangeRates,
     allTransactions
   } = useAppContext();
@@ -306,8 +306,7 @@ const Settings = () => {
           <div className="settings-section">
             <h3 className="section-title">Currency Settings</h3>
 
-            {/* Currency Selector */}
-         
+          
               
               <h4>Current Exchange Rates</h4>
               <div className="exchange-rates-grid">

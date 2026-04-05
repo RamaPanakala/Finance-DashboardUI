@@ -9,7 +9,7 @@ import '../styles/Profile.css';
  * Fields: Name, Email, Phone Number
  */
 const Profile = ({ onClose }) => {
-  const { user, updateProfile, loading, setUserRole, currency, logout} = useAuth();
+  const { user, updateProfile, loading, setUserRole, logout} = useAuth();
   
   const { role, setRole } = useAppContext();
   const [formData, setFormData] = useState({

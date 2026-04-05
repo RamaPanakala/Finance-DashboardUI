@@ -28,7 +28,7 @@ const CurrencySelector = ({ currentCurrency, onCurrencyChange }) => {
       >
         <span className="currency-flag">{selected?.flag}</span>
         <span className="currency-code">{selected?.code}</span>
-        <span className="dropdown-arrow">Select Currency cle▼</span>
+        <span className="dropdown-arrow">▼</span>
       </button>
 
       {isOpen && (
