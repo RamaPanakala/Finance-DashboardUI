@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useAppContext } from '../AppContext';
 import { convertCurrency, formatCurrency, getLocaleForCurrency } from '../utils/currencyUtils';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, } from 'recharts';
 import '../styles/Insights.css';
 
 /**
@@ -30,7 +30,7 @@ const Insights = () => {
     totalIncome, 
     totalExpenses, 
     spendingByCategory, 
-    darkMode, 
+    
     allTransactions,
     currency,
     exchangeRates
@@ -48,10 +48,10 @@ const Insights = () => {
   }, {});
 
   const months = Object.keys(monthlyData).sort();
-  const monthlyDataArray = months.map(m => monthlyData[m]);
+  /*const monthlyDataArray = months.map(m => monthlyData[m]);
   const averageMonthlyIncome = totalIncome / Math.max(months.length, 1);
   const averageMonthlyExpenses = totalExpenses / Math.max(months.length, 1);
-
+*/
   // Calculate expense ratio
   const expenseRatio = totalIncome > 0 ? (totalExpenses / totalIncome) * 100 : 0;
 
@@ -92,7 +92,7 @@ const Insights = () => {
   // Format month names for display
   const formatMonthName = (monthStr) => {
     if (!monthStr) return '';
-    const [year, month] = monthStr.split('-');
+    const [ month] = monthStr.split('-');
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return `${monthNames[parseInt(month) - 1]}`;
   };

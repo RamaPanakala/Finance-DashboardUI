@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAppContext } from '../AppContext';
 import { convertCurrency, formatCurrency, getLocaleForCurrency } from '../utils/currencyUtils';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  XAxis, YAxis, CartesianGrid, Tooltip,
   PieChart, Pie, Cell, ResponsiveContainer, Area, AreaChart
 } from 'recharts';
 import '../styles/Dashboard.css';
@@ -42,8 +42,8 @@ const SpendingTooltip = ({ active, payload, formatAmount }) => {
   );
 };
 
-/* ─── Donut Center Label ─────────────────────────────────────── */
-const DonutCenter = ({ cx, cy, total, formatAmount }) => (
+/* ─── Donut Center Label ─────────────────────────────────────── 
+const DonutCente = ({ cx, cy, total, formatAmount }) => (
   <text textAnchor="middle" dominantBaseline="middle">
     <tspan x={cx} y={cy - 10} className="donut-center-value" fontSize="18" fontWeight="700" fill="currentColor">
       {formatAmount(total)}
@@ -53,7 +53,7 @@ const DonutCenter = ({ cx, cy, total, formatAmount }) => (
     </tspan>
   </text>
 );
-
+*/
 /* ─── Main Dashboard ─────────────────────────────────────────── */
 const Dashboard = () => {
   const {
@@ -63,7 +63,7 @@ const Dashboard = () => {
     spendingByCategory,
     balanceTrend,
     allTransactions,
-    darkMode,
+    
     currency,
     exchangeRates,
   } = useAppContext();

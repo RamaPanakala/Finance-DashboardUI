@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { AppProvider } from './AppContext';
 import { AuthProvider, useAuth } from './AuthContext';
 import Sidebar from './components/Sidebar';
-import Header from './components/Header';
 import Dashboard from './components/Dashboard';
 import Transactions from './components/Transactions';
 import Insights from './components/Insights';
@@ -40,7 +39,7 @@ const PlaceholderPage = ({ title, icon }) => (
  */
 function AppContent() {
   const [activeMenu, setActiveMenu] = useState('dashboard');
-  const { isAuthenticated, userRole } = useAuth();
+  const { isAuthenticated,  } = useAuth();
 
   // If not authenticated, show login page
   if (!isAuthenticated) {

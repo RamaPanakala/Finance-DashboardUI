@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../AppContext';
 import { useAuth } from '../AuthContext';
-import CurrencySelector from './CurrencySelector';
 import RoleSelector from './RoleSelector';
 import Profile from './Profile';
 import '../styles/Header.css';
@@ -26,7 +25,7 @@ import '../styles/Header.css';
  * @returns {JSX.Element} The header navigation bar
  */
 const Header = () => {
-  const { darkMode, setDarkMode, currency, setCurrency } = useAppContext();
+  const { darkMode, setDarkMode, } = useAppContext();
   const { user, userRole, logout } = useAuth();
   const [showProfile, setShowProfile] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);

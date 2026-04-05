@@ -21,14 +21,14 @@ import { useAuth } from '../AuthContext';
  * @returns {JSX.Element} The sidebar navigation element
  */
 const Sidebar = ({ activeMenu, setActiveMenu }) => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  /*const [isCollapsed, setIsCollapsed] = useState(false);*/
   const [showHelp, setShowHelp] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const { darkMode, setDarkMode } = useAppContext();
-  const { user, userRole } = useAuth();
+  const {  userRole } = useAuth();
 
   const roleDisplay = userRole === 'admin' ? '🔐 Admin' : '👁️ Viewer';
-  const userName = user?.name || 'Guest';
+  /*const userName = user?.name || 'Guest';*/
 
   // Menu items with icons
   const menuItems = [
@@ -36,10 +36,10 @@ const Sidebar = ({ activeMenu, setActiveMenu }) => {
     { id: 'transactions', label: 'Transactions', icon: '💳' },
     { id: 'insights', label: 'Insights', icon: '📈' },
     { id: 'settings', label: 'Settings', icon: '⚙️' },];
-    {/*
+    /*
     { id: 'budgets', label: 'Budgets', icon: '💰' },
     { id: 'goals', label: 'Goals', icon: '🎯' },
-    { id: 'reports', label: 'Reports', icon: '📋' },*/}
+    { id: 'reports', label: 'Reports', icon: '📋' },*/
     
 
 

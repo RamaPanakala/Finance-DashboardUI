@@ -1,6 +1,6 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useAppContext } from '../AppContext';
-import { convertCurrency, formatCurrency, formatWithConversion, getLocaleForCurrency } from '../utils/currencyUtils';
+import { convertCurrency, formatCurrency, getLocaleForCurrency } from '../utils/currencyUtils';
 import '../styles/Transactions.css';
 
 /**
@@ -28,7 +28,6 @@ const Transactions = () => {
     addTransaction, 
     editTransaction, 
     deleteTransaction, 
-    darkMode,
     currency,
     exchangeRates
   } = useAppContext();
@@ -38,7 +37,7 @@ const Transactions = () => {
   const [formData, setFormData] = useState({ date: '', amount: '', category: '', type: 'expense' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  const tableRef = useRef(null);
+  /*const tableRef = useRef(null);*/
 
   /**
    * Calculate pagination
