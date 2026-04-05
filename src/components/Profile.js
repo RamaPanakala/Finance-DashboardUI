@@ -9,7 +9,8 @@ import '../styles/Profile.css';
  * Fields: Name, Email, Phone Number
  */
 const Profile = ({ onClose }) => {
-  const { user, updateProfile, loading, setUserRole, userRole } = useAuth();
+  const { user, updateProfile, loading, setUserRole, currency, logout} = useAuth();
+  
   const { role, setRole } = useAppContext();
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -61,7 +62,7 @@ const Profile = ({ onClose }) => {
     setCredentialLoading(true);
 
     // Validate credentials (mock implementation - replace with actual backend call)
-    if (adminEmail === 'admin@example.com' && adminPassword === 'admin123') {
+    if (adminEmail === 'admin@gmail.com' && adminPassword === 'admin123') {
       // Credentials correct - switch to Admin
       setRole('Admin');
       const roleValue = 'admin';
@@ -93,6 +94,7 @@ const Profile = ({ onClose }) => {
   };
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -124,6 +126,11 @@ const Profile = ({ onClose }) => {
       setError(err.message);
     }
   };
+  const handleLogout = () => {
+  logout();
+  setRole('Viewer');
+  window.location.href = '/login';
+};
 
   return (
     <div className="profile-modal">
@@ -208,7 +215,14 @@ const Profile = ({ onClose }) => {
                 >
                   ✏️ Edit Profile
                 </button>
+                
               )}
+              <button 
+      className="profile-logout-btn"
+      onClick={handleLogout}
+    >
+      🚪 Logout
+    </button>
             </div>
           </div>
         )}
@@ -304,7 +318,7 @@ const Profile = ({ onClose }) => {
                   type="email"
                   value={adminEmail}
                   onChange={(e) => setAdminEmail(e.target.value)}
-                  placeholder="admin@example.com"
+                  placeholder="admin@gmail.com"
                   disabled={credentialLoading}
                   required
                 />

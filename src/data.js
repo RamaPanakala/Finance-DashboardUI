@@ -84,7 +84,7 @@ const generateDummyTransactions = () => {
     { date: '2026-04-08', amount: -11.99, category: 'Books', type: 'expense' },
     { date: '2026-04-09', amount: -8.50, category: 'Transport', type: 'expense' },
     { date: '2026-04-09', amount: -14.00, category: 'Groceries', type: 'expense' },
-    { date: '2026-04-09', amount: 55.00, category: 'Part-time', type: 'income' },
+    { date: '2026-04-09', amount: 550000.00, category: 'Salary', type: 'income' },
     { date: '2026-04-10', amount: -6.25, category: 'Coffee', type: 'expense' },
     { date: '2026-04-10', amount: -18.50, category: 'Groceries', type: 'expense' },
     { date: '2026-04-10', amount: -4.99, category: 'Shopping', type: 'expense' },

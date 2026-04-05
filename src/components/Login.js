@@ -179,7 +179,7 @@ const Login = () => {
                 onChange={(e) => setViewerKey(e.target.value)}
                 disabled={loading}
               />
-              
+              key : viewer123
             </div>
             <button type="submit" disabled={loading} className="login-btn">
               {loading ? 'Logging in...' : 'Access Dashboard'}
@@ -196,23 +196,24 @@ const Login = () => {
               <input
                 id="admin-email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="admin@gmail.com"
                 value={adminEmail}
                 onChange={(e) => setAdminEmail(e.target.value)}
                 disabled={loading}
               />
-              
+              adminmail : admin@gmail.com
             </div>
             <div className="form-group">
               <label htmlFor="admin-password">Password</label>
               <input
                 id="admin-password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="admin123"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
                 disabled={loading}
               />
+              password : admin123
               
             </div>
             <button type="submit" disabled={loading} className="login-btn">

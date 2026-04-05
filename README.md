@@ -15,7 +15,6 @@ npm start
 
 The application will open automatically at `http://localhost:3000`
 
-for this section i am disable this login section
 ### 3. Login with Demo Credentials
 - **Viewer Mode**: Access Key: `viewer123`
 - **Admin Mode**: Email: `admin@example.com` | Password: `admin123`
