@@ -24,15 +24,12 @@ const Settings = () => {
     darkMode, 
     setDarkMode, 
     currency, 
-    setCurrency,
     exchangeRates,
-    setExchangeRates,
     allTransactions
   } = useAppContext();
   const { user, logout } = useAuth();
   
   const [activeTab, setActiveTab] = useState('general');
-  const [exportFormat, setExportFormat] = useState('pdf');
   const [exportDateRange, setExportDateRange] = useState('all');
   const [exportLoading, setExportLoading] = useState(false);
   const [notificationSettings, setNotificationSettings] = useState({
@@ -86,7 +83,6 @@ const Settings = () => {
       const transactions = getFilteredTransactions();
       const pdf = new jsPDF();
       const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
       
       // Header
       pdf.setFontSize(20);
@@ -309,9 +305,11 @@ const Settings = () => {
         {activeTab === 'currency' && (
           <div className="settings-section">
             <h3 className="section-title">Currency Settings</h3>
-            
+
             {/* Currency Info */}
             <div className="currency-info-card">
+              <CurrencySelector placeholder="Select Currency" />
+              
               <h4>Current Exchange Rates</h4>
               <div className="exchange-rates-grid">
                 {Object.entries(exchangeRates).map(([code, rate]) => (
