@@ -79,9 +79,23 @@ const Insights = () => {
   const previousMonthData = previousMonth ? monthlyData[previousMonth] : { income: 0, expenses: 0 };
 
   // Calculate month-over-month comparison
+  const incomeChange = previousMonthData.income 
+    ? ((currentMonthData.income - previousMonthData.income) / previousMonthData.income) * 100 
+    : 0;
   const expenseChange = previousMonthData.expenses 
     ? ((currentMonthData.expenses - previousMonthData.expenses) / previousMonthData.expenses) * 100 
     : 0;
+  const balanceChange = (previousMonthData.income - previousMonthData.expenses) !== 0
+    ? (((currentMonthData.income - currentMonthData.expenses) - (previousMonthData.income - previousMonthData.expenses)) / Math.abs(previousMonthData.income - previousMonthData.expenses) * 100)
+    : 0;
+
+  // Format month names for display
+  const formatMonthName = (monthStr) => {
+    if (!monthStr) return '';
+    const [year, month] = monthStr.split('-');
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return `${monthNames[parseInt(month) - 1]}`;
+  };
 
   return (
     <div className="insights-container">
@@ -121,18 +135,68 @@ const Insights = () => {
       </div>
 
       {/* Monthly Comparison Card */}
-      <div className={`insight-card ${expenseChange <= 0 ? 'positive' : 'cautionary'}`}>
-        <div className={`insight-icon ${expenseChange <= 0 ? 'positive' : 'cautionary'}`}>
-          {expenseChange <= 0 ? '📉' : '📈'}
-        </div>
+      <div className="insight-card comparison-card">
+        <div className="insight-icon">📊</div>
         <div className="insight-content">
           <p className="insight-title">Monthly Comparison</p>
-          <p className="insight-description">
-            Current month expenses: <span className="insight-highlight">{formatAmount(currentMonthData.expenses)}</span>. 
-            {expenseChange !== 0 ? (
-              `${expenseChange > 0 ? '⬆️ Up' : '⬇️ Down'} ${Math.abs(expenseChange).toFixed(1)}% vs last month`
-            ) : 'No previous month data'}
-          </p>
+          <p className="comparison-period">{formatMonthName(previousMonth)} vs {formatMonthName(currentMonth)}</p>
+          
+          {/* Comparison Grid */}
+          <div className="comparison-metrics">
+            {/* Income Comparison */}
+            <div className="metric-box">
+              <div className="metric-label">💰 Income</div>
+              <div className="metric-values">
+                <div className="metric-prev">
+                  <span className="label">Previous</span>
+                  <span className="amount">{formatAmount(previousMonthData.income)}</span>
+                </div>
+                <div className="metric-current">
+                  <span className="label">Current</span>
+                  <span className="amount">{formatAmount(currentMonthData.income)}</span>
+                </div>
+              </div>
+              <div className={`metric-change ${incomeChange >= 0 ? 'positive' : 'negative'}`}>
+                {incomeChange > 0 ? '⬆️' : incomeChange < 0 ? '⬇️' : '➡️'} {Math.abs(incomeChange).toFixed(1)}%
+              </div>
+            </div>
+
+            {/* Expenses Comparison */}
+            <div className="metric-box">
+              <div className="metric-label">💸 Expenses</div>
+              <div className="metric-values">
+                <div className="metric-prev">
+                  <span className="label">Previous</span>
+                  <span className="amount">{formatAmount(previousMonthData.expenses)}</span>
+                </div>
+                <div className="metric-current">
+                  <span className="label">Current</span>
+                  <span className="amount">{formatAmount(currentMonthData.expenses)}</span>
+                </div>
+              </div>
+              <div className={`metric-change ${expenseChange <= 0 ? 'positive' : 'negative'}`}>
+                {expenseChange > 0 ? '⬆️' : expenseChange < 0 ? '⬇️' : '➡️'} {Math.abs(expenseChange).toFixed(1)}%
+              </div>
+            </div>
+
+            {/* Balance Comparison */}
+            <div className="metric-box">
+              <div className="metric-label">💳 Balance</div>
+              <div className="metric-values">
+                <div className="metric-prev">
+                  <span className="label">Previous</span>
+                  <span className="amount">{formatAmount(previousMonthData.income - previousMonthData.expenses)}</span>
+                </div>
+                <div className="metric-current">
+                  <span className="label">Current</span>
+                  <span className="amount">{formatAmount(currentMonthData.income - currentMonthData.expenses)}</span>
+                </div>
+              </div>
+              <div className={`metric-change ${balanceChange >= 0 ? 'positive' : 'negative'}`}>
+                {balanceChange > 0 ? '⬆️' : balanceChange < 0 ? '⬇️' : '➡️'} {Math.abs(balanceChange).toFixed(1)}%
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -154,14 +218,14 @@ const Insights = () => {
         <h3 className="chart-section-title">📊 Spending by Category</h3>
         <div className="insight-chart-container">
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={categoryChartData} margin={{ top: 10, right: 10, bottom: 60, left: 10 }}>
+            <BarChart data={categoryChartData} margin={{ top: 0, right: 10, bottom: 10, left: 10 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis 
                 dataKey="category" 
-                tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
-                angle={-45}
+                tick={{ fontSize: 1, fill: 'var(--text-secondary)' }}
+                angle={45}
                 textAnchor="end"
-                height={80}
+                height={-10}
               />
               <YAxis 
                 tick={{ fontSize: 11, fill: 'var(--text-secondary)' }}
@@ -199,13 +263,24 @@ const Insights = () => {
                 'Groceries': '🛒',
                 'Shopping': '🛍️',
                 'Transport': '🚗',
-                'Utilities': '💡',
                 'Entertainment': '🎬',
-                'Salary': '💼',
                 'Freelance': '💻',
                 'Food & Dining': '🍽️',
                 'Healthcare': '⚕️',
+                'Coffee': '☕',
+                'Snacks': '🍿',
+                'Phone Bill': '📱',
+                'Internet': '🌐',
+                'Subscription': '📡',
+                'Books': '📚',
+                'Part-time': '💼',
+                'Gigs': '⚡',
+                'Tutoring': '🎓',
+                'Utilities': '💡',
+                'Parking': '🚗',
+                'Gas': '⛽',
                 'Insurance': '🛡️',
+                'Salary': '💼',
                 'Bonus': '🎁',
                 'Investment': '📈',
                 'Interest': '💹'
@@ -215,8 +290,14 @@ const Insights = () => {
                 'Groceries': 'food',
                 'Shopping': 'shopping',
                 'Transport': 'transport',
-                'Utilities': 'utilities',
                 'Entertainment': 'entertainment',
+                'Food & Dining': 'food',
+                'Freelance': 'income',
+                'Coffee': 'food',
+                'Snacks': 'food',
+                'Part-time': 'income',
+                'Gigs': 'income',
+                'Tutoring': 'income',
               };
 
               return (

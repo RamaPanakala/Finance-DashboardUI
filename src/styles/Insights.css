@@ -230,6 +230,7 @@
 .spending-icon.transport     { background: rgba(59,130,246,0.12);  color: #2563eb; }
 .spending-icon.utilities     { background: rgba(234,179,8,0.12);   color: #ca8a04; }
 .spending-icon.entertainment { background: rgba(239,68,68,0.12);   color: #dc2626; }
+.spending-icon.income        { background: rgba(16,185,129,0.12);  color: #10b981; }
 .spending-icon.other         { background: rgba(107,114,128,0.12); color: #6b7280; }
 
 .spending-name { font-size: 13px; font-weight: 500; color: var(--text-primary); }
@@ -259,7 +260,101 @@
 }
 .view-all-link:hover { color: #8b5cf6; gap: 8px; }
 
-/* ── Dark Mode ────────────────────────────────────────────────── */
+/* ── Comparison Card ──────────────────────────────────────────── */
+.insight-card.comparison-card {
+  border-left-color: #3b82f6;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.comparison-period {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: -2px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.comparison-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.metric-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  transition: all 0.25s ease;
+}
+
+.metric-box:hover {
+  border-color: #6366f1;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.1);
+  transform: translateY(-2px);
+}
+
+.metric-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.metric-values {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.metric-prev,
+.metric-current {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
+.metric-prev .label,
+.metric-current .label {
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.metric-prev .amount,
+.metric-current .amount {
+  font-weight: 700;
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.metric-change {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 6px;
+  border-radius: 6px;
+  text-align: center;
+  transition: all 0.25s ease;
+}
+
+.metric-change.positive {
+  background: rgba(16,185,129,0.12);
+  color: #10b981;
+}
+
+.metric-change.negative {
+  background: rgba(239,68,68,0.12);
+  color: #ef4444;
+}
+
+/* ── Dark Mode ────────────────────────────────────────────────– */
 .dark-mode .insights-container  { background: var(--bg-card); border-color: var(--border); }
 .dark-mode .insight-card         { background: var(--bg-card-hover); }
 .dark-mode .insight-title        { color: var(--text-primary); }
@@ -276,9 +371,12 @@
   .insight-icon { width: 34px; height: 34px; font-size: 15px; }
   .insight-title { font-size: 12px; }
   .insight-description { font-size: 11px; }
-  .spending-item { padding: 10px 6px; }  .insight-chart-container { height: 250px; }
+  .spending-item { padding: 10px 6px; }  
+  .insight-chart-container { height: 250px; }
   .chart-section-title { font-size: 13px; }
   .spending-title { font-size: 12px; }
+  .comparison-metrics { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; }
+  .metric-box { padding: 10px; }
 }
 
 @media (max-width: 480px) {
@@ -288,11 +386,20 @@
   .insight-title { font-size: 11px; }
   .insight-description { font-size: 10px; }
   .spending-item { padding: 8px 4px; }
+  .spending-name { font-size: 12px; }
+  .spending-amount { font-size: 12px; }
+  .spending-icon { width: 26px; height: 26px; font-size: 12px; }
   .insight-chart-container { height: 200px; }
   .insight-chart-section { padding: 14px; }
   .chart-section-title { font-size: 12px; margin-bottom: 12px; }
   .spending-title { font-size: 11px; }
-  .spending-list { gap: 6px; }}
+  .spending-list { gap: 6px; }
+  .comparison-metrics { grid-template-columns: 1fr; gap: 8px; }
+  .metric-box { padding: 10px; }
+  .metric-label { font-size: 10px; }
+  .metric-prev .amount,
+  .metric-current .amount { font-size: 11px; }
+}
 
 /* ── Fullscreen ───────────────────────────────────────────────── */
 .fullscreen-viewer .insights-container {

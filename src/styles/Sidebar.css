@@ -383,8 +383,12 @@
 }
 
 @media (max-width: 480px) {
-  .sidebar-menu-item span { display: none; }
+  .sidebar-menu-item span { display: inline; }
   .sidebar-menu-item { padding: 8px 10px; }
   .sidebar-logo { width: 32px; height: 32px; font-size: 13px; }
   .sidebar-header { padding: 8px 10px; }
+  .sidebar-menu-item {
+    padding: 7px 8px;
+    font-size: 11px;
+  }
 }

@@ -317,7 +317,7 @@ const Profile = ({ onClose }) => {
                   type="password"
                   value={adminPassword}
                   onChange={(e) => setAdminPassword(e.target.value)}
-                  placeholder="Enter password"
+                  placeholder="admin123"
                   disabled={credentialLoading}
                   required
                 />

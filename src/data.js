@@ -1,50 +1,109 @@
-// Generate 500+ dummy transactions spanning 12 months
+// Generate 80+ dummy transactions with LOW money amounts - March & April 2026
 const generateDummyTransactions = () => {
   const transactions = [];
-  const categories = ['Salary', 'Freelance', 'Groceries', 'Transport', 'Utilities', 'Entertainment', 'Shopping', 'Food & Dining', 'Healthcare', 'Insurance'];
-  const expenses = ['Groceries', 'Transport', 'Utilities', 'Entertainment', 'Shopping', 'Food & Dining', 'Healthcare', 'Insurance'];
-  const income = ['Salary', 'Freelance', 'Bonus', 'Investment', 'Interest'];
+  const expenses = ['Groceries', 'Transport', 'Utilities', 'Entertainment', 'Shopping', 'Food & Dining', 'Healthcare', 'Insurance', 'Phone Bill', 'Internet', 'Coffee', 'Snacks', 'Parking', 'Gas', 'Books', 'Subscription'];
+  const income = ['Freelance', 'Tutoring', 'Gigs', 'Part-time'];
   
   let id = 1;
-  const startDate = new Date('2023-01-01');
-  const endDate = new Date('2023-12-31');
-  
-  // Generate daily transactions
-  for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
-    const currentDate = new Date(date);
-    const dateStr = currentDate.toISOString().split('T')[0];
-    
-    // 2-4 transactions per day
-    const txCount = Math.floor(Math.random() * 3) + 2;
-    
-    for (let i = 0; i < txCount; i++) {
-      // 30% chance of income, 70% expense
-      if (Math.random() < 0.3) {
-        // Income transaction
-        const incomeCategory = income[Math.floor(Math.random() * income.length)];
-        const amount = Math.floor(Math.random() * 500) + 200;
-        transactions.push({
-          id: id++,
-          date: dateStr,
-          amount: amount,
-          category: incomeCategory,
-          type: 'income'
-        });
-      } else {
-        // Expense transaction
-        const expenseCategory = expenses[Math.floor(Math.random() * expenses.length)];
-        const amount = -(Math.floor(Math.random() * 100) + 5);
-        transactions.push({
-          id: id++,
-          date: dateStr,
-          amount: amount,
-          category: expenseCategory,
-          type: 'expense'
-        });
-      }
-    }
-  }
-  
+
+  // Generate 80+ transactions with low amounts across March & April 2026
+  const transactionData = [
+    // MARCH 2026 - Week 1
+    { date: '2026-03-01', amount: -8.50, category: 'Transport', type: 'expense' },
+    { date: '2026-03-01', amount: -21.00, category: 'Groceries', type: 'expense' },
+    { date: '2026-03-01', amount: -5.50, category: 'Coffee', type: 'expense' },
+    { date: '2026-03-02', amount: -15.25, category: 'Food & Dining', type: 'expense' },
+    { date: '2026-03-02', amount: 45.00, category: 'Freelance', type: 'income' },
+    { date: '2026-03-02', amount: -7.99, category: 'Snacks', type: 'expense' },
+    { date: '2026-03-03', amount: -6.75, category: 'Coffee', type: 'expense' },
+    { date: '2026-03-03', amount: -11.50, category: 'Entertainment', type: 'expense' },
+    { date: '2026-03-03', amount: -18.00, category: 'Shopping', type: 'expense' },
+    { date: '2026-03-04', amount: -9.25, category: 'Transport', type: 'expense' },
+    { date: '2026-03-04', amount: -13.50, category: 'Groceries', type: 'expense' },
+    { date: '2026-03-04', amount: 50.00, category: 'Gigs', type: 'income' },
+
+    // MARCH 2026 - Week 2
+    { date: '2026-03-08', amount: -5.00, category: 'Coffee', type: 'expense' },
+    { date: '2026-03-08', amount: -20.75, category: 'Food & Dining', type: 'expense' },
+    { date: '2026-03-08', amount: -11.99, category: 'Books', type: 'expense' },
+    { date: '2026-03-09', amount: -8.50, category: 'Transport', type: 'expense' },
+    { date: '2026-03-09', amount: -14.00, category: 'Groceries', type: 'expense' },
+    { date: '2026-03-09', amount: 35.00, category: 'Part-time', type: 'income' },
+    { date: '2026-03-10', amount: -6.25, category: 'Coffee', type: 'expense' },
+    { date: '2026-03-10', amount: -18.50, category: 'Groceries', type: 'expense' },
+    { date: '2026-03-10', amount: -4.99, category: 'Shopping', type: 'expense' },
+    { date: '2026-03-11', amount: -9.75, category: 'Transport', type: 'expense' },
+    { date: '2026-03-11', amount: -22.00, category: 'Food & Dining', type: 'expense' },
+    { date: '2026-03-11', amount: 40.00, category: 'Tutoring', type: 'income' },
+
+    // MARCH 2026 - Week 3
+    { date: '2026-03-15', amount: -5.00, category: 'Entertainment', type: 'expense' },
+    { date: '2026-03-15', amount: -14.30, category: 'Groceries', type: 'expense' },
+    { date: '2026-03-15', amount: -7.50, category: 'Phone Bill', type: 'expense' },
+    { date: '2026-03-16', amount: -11.99, category: 'Subscription', type: 'expense' },
+    { date: '2026-03-16', amount: -6.75, category: 'Coffee', type: 'expense' },
+    { date: '2026-03-16', amount: 55.00, category: 'Gigs', type: 'income' },
+    { date: '2026-03-17', amount: -8.25, category: 'Transport', type: 'expense' },
+    { date: '2026-03-17', amount: -19.50, category: 'Shopping', type: 'expense' },
+    { date: '2026-03-17', amount: -5.50, category: 'Coffee', type: 'expense' },
+    { date: '2026-03-18', amount: -13.75, category: 'Groceries', type: 'expense' },
+    { date: '2026-03-18', amount: -20.00, category: 'Food & Dining', type: 'expense' },
+    { date: '2026-03-18', amount: 45.00, category: 'Freelance', type: 'income' },
+
+    // MARCH 2026 - Week 4
+    { date: '2026-03-22', amount: -6.50, category: 'Coffee', type: 'expense' },
+    { date: '2026-03-22', amount: -9.99, category: 'Snacks', type: 'expense' },
+    { date: '2026-03-22', amount: -25.00, category: 'Healthcare', type: 'expense' },
+    { date: '2026-03-23', amount: -7.25, category: 'Transport', type: 'expense' },
+    { date: '2026-03-23', amount: -17.50, category: 'Groceries', type: 'expense' },
+    { date: '2026-03-23', amount: 50.00, category: 'Part-time', type: 'income' },
+    { date: '2026-03-24', amount: -4.75, category: 'Entertainment', type: 'expense' },
+    { date: '2026-03-24', amount: -10.50, category: 'Phone Bill', type: 'expense' },
+    { date: '2026-03-24', amount: -12.99, category: 'Internet', type: 'expense' },
+    { date: '2026-03-25', amount: -6.00, category: 'Coffee', type: 'expense' },
+    { date: '2026-03-25', amount: -16.75, category: 'Shopping', type: 'expense' },
+    { date: '2026-03-25', amount: 35.00, category: 'Tutoring', type: 'income' },
+
+    // APRIL 2026 - Week 1
+    { date: '2026-04-01', amount: -8.50, category: 'Transport', type: 'expense' },
+    { date: '2026-04-01', amount: -21.00, category: 'Groceries', type: 'expense' },
+    { date: '2026-04-01', amount: -5.50, category: 'Coffee', type: 'expense' },
+    { date: '2026-04-02', amount: -15.25, category: 'Food & Dining', type: 'expense' },
+    { date: '2026-04-02', amount: 60.00, category: 'Freelance', type: 'income' },
+    { date: '2026-04-02', amount: -7.99, category: 'Snacks', type: 'expense' },
+    { date: '2026-04-03', amount: -6.75, category: 'Coffee', type: 'expense' },
+    { date: '2026-04-03', amount: -11.50, category: 'Entertainment', type: 'expense' },
+    { date: '2026-04-03', amount: -18.00, category: 'Shopping', type: 'expense' },
+    { date: '2026-04-04', amount: -9.25, category: 'Transport', type: 'expense' },
+    { date: '2026-04-04', amount: -13.50, category: 'Groceries', type: 'expense' },
+    { date: '2026-04-04', amount: 65.00, category: 'Gigs', type: 'income' },
+
+    // APRIL 2026 - Week 2
+    { date: '2026-04-08', amount: -5.00, category: 'Coffee', type: 'expense' },
+    { date: '2026-04-08', amount: -20.75, category: 'Food & Dining', type: 'expense' },
+    { date: '2026-04-08', amount: -11.99, category: 'Books', type: 'expense' },
+    { date: '2026-04-09', amount: -8.50, category: 'Transport', type: 'expense' },
+    { date: '2026-04-09', amount: -14.00, category: 'Groceries', type: 'expense' },
+    { date: '2026-04-09', amount: 55.00, category: 'Part-time', type: 'income' },
+    { date: '2026-04-10', amount: -6.25, category: 'Coffee', type: 'expense' },
+    { date: '2026-04-10', amount: -18.50, category: 'Groceries', type: 'expense' },
+    { date: '2026-04-10', amount: -4.99, category: 'Shopping', type: 'expense' },
+    { date: '2026-04-11', amount: -9.75, category: 'Transport', type: 'expense' },
+    { date: '2026-04-11', amount: -22.00, category: 'Food & Dining', type: 'expense' },
+    { date: '2026-04-11', amount: 50.00, category: 'Tutoring', type: 'income' }
+  ];
+
+  // Add all transactions
+  transactionData.forEach(tx => {
+    transactions.push({
+      id: id++,
+      date: tx.date,
+      amount: tx.amount,
+      category: tx.category,
+      type: tx.type
+    });
+  });
+
   return transactions;
 };
 

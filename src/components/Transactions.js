@@ -216,8 +216,20 @@ const Transactions = () => {
             <option value="">All Categories</option>
             <option value="Groceries">Groceries</option>
             <option value="Transport">Transport</option>
-            <option value="Utilities">Utilities</option>
+            <option value="Coffee">Coffee</option>
+            <option value="Food & Dining">Food & Dining</option>
+            <option value="Shopping">Shopping</option>
             <option value="Entertainment">Entertainment</option>
+            <option value="Snacks">Snacks</option>
+            <option value="Healthcare">Healthcare</option>
+            <option value="Phone Bill">Phone Bill</option>
+            <option value="Internet">Internet</option>
+            <option value="Subscription">Subscription</option>
+            <option value="Books">Books</option>
+            <option value="Freelance">Freelance</option>
+            <option value="Part-time">Part-time</option>
+            <option value="Gigs">Gigs</option>
+            <option value="Tutoring">Tutoring</option>
           </select>
           <select
             className="filter-select"
