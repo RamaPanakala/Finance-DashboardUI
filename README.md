@@ -13,7 +13,7 @@ npm install
 npm start
 ```
 
-The application will open automatically at `http://localhost:3000`
+The application will open automatically at `http://localhost:3001 `
 
 ### 3. Login with Demo Credentials
 - **Viewer Mode**: Access Key: `viewer123`

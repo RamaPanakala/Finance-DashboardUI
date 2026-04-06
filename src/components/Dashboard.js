@@ -296,23 +296,7 @@ const Dashboard = () => {
           </div>
 
           {/* Legend */}
-          <div className="chart-legend">
-            {pieData.map((item, index) => {
-              const pct = totalSpent > 0 ? ((item.value / totalSpent) * 100).toFixed(1) : 0;
-              return (
-                <div className="legend-item" key={item.name}>
-                  <span
-                    className="legend-dot"
-                    style={{ background: COLORS[index % COLORS.length] }}
-                  />
-                  <span className="legend-label">{item.name}</span>
-                  <span className="legend-pct">{pct}%</span>
-                  <span className="legend-value">{formatAmount(item.value)}</span>
-                </div>
-              );
-            })}
           </div>
-        </div>
 
       </div>
     </div>

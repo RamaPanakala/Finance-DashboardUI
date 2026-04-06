@@ -9,9 +9,6 @@ import Settings from './components/Settings';
 import Login from './components/Login';
 import './App.css';
 
-/**
- * Placeholder Component for Future Pages
- */
 const PlaceholderPage = ({ title, icon }) => (
   <div style={{
     padding: '40px',
@@ -21,78 +18,60 @@ const PlaceholderPage = ({ title, icon }) => (
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: '500px',
+    minHeight: '400px',
     gap: '16px'
   }}>
     <div style={{ fontSize: '64px' }}>{icon}</div>
-    <h2 style={{ color: '#1a1a1a', marginBottom: '8px' }}>{title}</h2>
-    <p>This page is coming soon!</p>
+    <h2 style={{ color: 'var(--text-primary)', marginBottom: '8px' }}>{title}</h2>
+    <p style={{ color: 'var(--text-secondary)' }}>This page is coming soon!</p>
   </div>
 );
 
-/**
- * AppContent Component
- * 
- * Main application layout with sidebar, header, and content areas
- * Uses a professional two-column layout with responsive design
- * Supports fullscreen viewer mode for individual components
- */
 function AppContent() {
   const [activeMenu, setActiveMenu] = useState('dashboard');
-  const { isAuthenticated,  } = useAuth();
+  const { isAuthenticated } = useAuth();
 
-  // If not authenticated, show login page
-  if (!isAuthenticated) {
-    return <Login />;
-  }
+  if (!isAuthenticated) return <Login />;
 
-  // Function to render the active component
   const renderComponent = () => {
-    switch(activeMenu) {
-      case 'dashboard':
-        return <Dashboard />;
-      case 'transactions':
-        return <Transactions />;
-      case 'insights':
-        return <Insights />;
-      case 'budgets':
-        return <PlaceholderPage title="Budgets" icon="💰" />;
-      case 'goals':
-        return <PlaceholderPage title="Financial Goals" icon="🎯" />;
-      case 'reports':
-        return <PlaceholderPage title="Reports" icon="📋" />;
-      case 'settings':
-        return <Settings />;
-      default:
-        return <PlaceholderPage title="Dashboard" icon="📊" />;
+    switch (activeMenu) {
+      case 'dashboard':    return <Dashboard />;
+      case 'transactions': return <Transactions />;
+      case 'insights':     return <Insights />;
+      case 'budgets':      return <PlaceholderPage title="Budgets"         icon="💰" />;
+      case 'goals':        return <PlaceholderPage title="Financial Goals" icon="🎯" />;
+      case 'reports':      return <PlaceholderPage title="Reports"         icon="📋" />;
+      case 'settings':     return <Settings />;
+      default:             return <PlaceholderPage title="Dashboard"       icon="📊" />;
     }
   };
 
   return (
+    /*
+      Layout structure:
+      ┌─────────────────────────────────────────┐
+      │ .app-wrapper  (display:block)           │
+      │  ├── <Sidebar />  (position:fixed)      │
+      │  │    └── .mobile-topbar (mobile only)  │
+      │  └── .app-container  (margin-left:250px)│
+      │       └── .app-content                  │
+      │            └── .content-wrapper         │
+      │                 └── .main-content       │
+      └─────────────────────────────────────────┘
+    */
     <div className="app-wrapper">
-      {/* Left Navigation Sidebar */}
       <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
 
-      {/* Main Application Container */}
       <div className="app-container">
-        {/* Top Navigation Header - Hidden to save space */}
-        {/* <div className="app-header">
-          <Header />
-        </div> */}
-
-        {/* Main Content Area */}
         <div className="app-content">
           <div className="content-wrapper">
-            {/* Main Content Column - Conditionally Rendered */}
             <div className="main-content">
               {renderComponent()}
             </div>
 
-            {/* Right Sidebar Column - Only show for dashboard */}
+            {/* Right panel — dashboard only, hidden on tablet/mobile */}
             {activeMenu === 'dashboard' && (
-              <div className="right-sidebar">
-                {/* This will be handled by Dashboard component if needed */}
-              </div>
+              <div className="right-sidebar" />
             )}
           </div>
         </div>
@@ -101,12 +80,6 @@ function AppContent() {
   );
 }
 
-/**
- * App Component - Root component
- * 
- * Wraps the entire application with AuthProvider and AppProvider for state management
- * and imports all global styles
- */
 function App() {
   return (
     <AuthProvider>

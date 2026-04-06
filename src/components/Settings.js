@@ -1,499 +1,283 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import '../styles/Settings.css';
 import { useAppContext } from '../AppContext';
 import { useAuth } from '../AuthContext';
-import { convertCurrency, formatCurrency, getLocaleForCurrency } from '../utils/currencyUtils';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
-import '../styles/Settings.css';
 
-/**
- * Settings Component
- * 
- * Allows users to configure:
- * - Currency preferences
- * - Theme settings
- * - Account information
- * - Export preferences
- * 
- * @component
- * @returns {JSX.Element} The settings page
- */
-const Settings = () => {
-  const { 
-    darkMode, 
-    setDarkMode, 
-    currency, 
-    
-    exchangeRates,
-    allTransactions
-  } = useAppContext();
-  const { user, logout } = useAuth();
-  
-  const [activeTab, setActiveTab] = useState('general');
-  const [exportDateRange, setExportDateRange] = useState('all');
-  const [exportLoading, setExportLoading] = useState(false);
-  const [notificationSettings, setNotificationSettings] = useState({
-    emailNotifications: true,
-    transactionAlerts: true,
-    budgetWarnings: true,
-    weeklyReport: true,
+const TABS = [
+  { id: 'general',       label: 'General',       icon: '🎨' },
+  { id: 'currency',      label: 'Currency',       icon: '💱' },
+  { id: 'notifications', label: 'Notifications',  icon: '🔔' },
+  { id: 'export',        label: 'Data Export',    icon: '📊' },
+  { id: 'account',       label: 'Account',        icon: '👤' },
+];
+
+const CURRENCIES = [
+  { code: 'USD', symbol: '$',  name: 'US Dollar' },
+  { code: 'EUR', symbol: '€',  name: 'Euro' },
+  { code: 'GBP', symbol: '£',  name: 'British Pound' },
+  { code: 'INR', symbol: '₹',  name: 'Indian Rupee' },
+  { code: 'JPY', symbol: '¥',  name: 'Japanese Yen' },
+  { code: 'CAD', symbol: 'CA$',name: 'Canadian Dollar' },
+  { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+];
+
+export default function Settings() {
+  const [activeTab, setActiveTab]   = useState('general');
+  const [sliderStyle, setSliderStyle] = useState({});
+  const navRef   = useRef(null);
+  const btnRefs  = useRef({});
+
+  const { darkMode, setDarkMode, currency, setCurrency } = useAppContext();
+  const { userRole } = useAuth();
+
+  /* ── Sliding indicator position ──────────────────────────────── */
+  useEffect(() => {
+    const btn = btnRefs.current[activeTab];
+    const nav = navRef.current;
+    if (!btn || !nav) return;
+
+    const btnRect = btn.getBoundingClientRect();
+    /*const navRect = nav.getBoundingClientRect();*/
+
+    setSliderStyle({
+      left:  btn.offsetLeft + 'px',
+      width: btnRect.width  + 'px',
+    });
+  }, [activeTab]);
+
+  /* ── Scroll active tab into view on mobile ───────────────────── */
+  useEffect(() => {
+    const btn = btnRefs.current[activeTab];
+    if (btn) btn.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+  }, [activeTab]);
+
+  /* ── Notification state ───────────────────────────────────────── */
+  const [notif, setNotif] = useState({
+    email: true, push: false, budget: true, weekly: false,
   });
 
-  const handleNotificationChange = (key) => {
-    setNotificationSettings({
-      ...notificationSettings,
-      [key]: !notificationSettings[key]
-    });
+  const toggleNotif = (key) => setNotif(p => ({ ...p, [key]: !p[key] }));
+
+  /* ── Export handlers ──────────────────────────────────────────── */
+  const handleExport = (format) => {
+    alert(`Exporting as ${format.toUpperCase()}… (wire up your export logic here)`);
   };
 
-  /**
-   * Filter transactions based on date range
-   */
-  const getFilteredTransactions = () => {
-    const now = new Date();
-    let startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+  /* ── Tab content ─────────────────────────────────────────────── */
+  const renderContent = () => {
+    switch (activeTab) {
 
-    switch(exportDateRange) {
-      case 'current-month':
-        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        break;
-      case 'last-30-days':
-        startDate = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-        break;
-      case 'last-quarter':
-        startDate = new Date(now.getFullYear(), now.getMonth() - 3, 1);
-        break;
-      case 'current-year':
-        startDate = new Date(now.getFullYear(), 0, 1);
-        break;
-      case 'all':
-      default:
-        return allTransactions || [];
+      /* ── General ── */
+      case 'general': return (
+        <div className="settings-section">
+          <h2 className="section-title">General Settings</h2>
+          <p className="section-description">Customise how ZORVYN looks and behaves.</p>
+
+          <div className="setting-item">
+            <div className="setting-info">
+              <p className="setting-label">Dark Mode</p>
+              <p className="setting-description">Switch between light and dark theme</p>
+            </div>
+            <label className="toggle-switch">
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={() => setDarkMode(!darkMode)}
+              />
+              <span className="slider" />
+            </label>
+          </div>
+
+          <div className="setting-item">
+            <div className="setting-info">
+              <p className="setting-label">Language</p>
+              <p className="setting-description">Choose your display language</p>
+            </div>
+            <select className="setting-select">
+              <option>English</option>
+              <option>Hindi</option>
+              <option>Telugu</option>
+              <option>Tamil</option>
+            </select>
+          </div>
+
+          <div className="setting-item">
+            <div className="setting-info">
+              <p className="setting-label">Date Format</p>
+              <p className="setting-description">How dates are displayed throughout the app</p>
+            </div>
+            <select className="setting-select">
+              <option>DD/MM/YYYY</option>
+              <option>MM/DD/YYYY</option>
+              <option>YYYY-MM-DD</option>
+            </select>
+          </div>
+        </div>
+      );
+
+      /* ── Currency ── */
+      case 'currency': return (
+        <div className="settings-section">
+          <h2 className="section-title">Currency Settings</h2>
+          <p className="section-description">Set your primary currency and view exchange rates.</p>
+
+          <div className="setting-item">
+            <div className="setting-info">
+              <p className="setting-label">Primary Currency</p>
+              <p className="setting-description">Used for all balances and transactions</p>
+            </div>
+            <select
+              className="setting-select"
+              value={currency || 'INR'}
+              onChange={(e) => setCurrency && setCurrency(e.target.value)}
+            >
+              {CURRENCIES.map(c => (
+                <option key={c.code} value={c.code}>
+                  {c.symbol} {c.code} — {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="currency-info-card">
+            <h4>Live Exchange Rates (vs USD)</h4>
+            <div className="exchange-rates-grid">
+              {[
+                { code:'EUR', val:'0.92' }, { code:'GBP', val:'0.79' },
+                { code:'INR', val:'83.12' },{ code:'JPY', val:'149.5' },
+                { code:'CAD', val:'1.36' }, { code:'AUD', val:'1.53' },
+              ].map(r => (
+                <div className="rate-item" key={r.code}>
+                  <span className="rate-code">{r.code}</span>
+                  <span className="rate-value">1 USD = {r.val}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+
+      /* ── Notifications ── */
+      case 'notifications': return (
+        <div className="settings-section">
+          <h2 className="section-title">Notification Preferences</h2>
+          <p className="section-description">Choose what alerts you want to receive.</p>
+
+          {[
+            { key:'email',  label:'Email Notifications',    desc:'Receive summaries by email' },
+            { key:'push',   label:'Push Notifications',     desc:'Browser / mobile push alerts' },
+            { key:'budget', label:'Budget Alerts',          desc:'Notify when you exceed a budget limit' },
+            { key:'weekly', label:'Weekly Report',          desc:'Get a weekly spending digest every Monday' },
+          ].map(({ key, label, desc }) => (
+            <div className="setting-item" key={key}>
+              <div className="setting-info">
+                <p className="setting-label">{label}</p>
+                <p className="setting-description">{desc}</p>
+              </div>
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={notif[key]}
+                  onChange={() => toggleNotif(key)}
+                />
+                <span className="slider" />
+              </label>
+            </div>
+          ))}
+        </div>
+      );
+
+      /* ── Data Export ── */
+      case 'export': return (
+        <div className="settings-section">
+          <h2 className="section-title">Data Export</h2>
+          <p className="section-description">Download your transaction data in your preferred format.</p>
+
+          <div className="setting-item" style={{ flexDirection:'column', alignItems:'flex-start', gap:12 }}>
+            <div className="setting-info">
+              <p className="setting-label">Export Transactions</p>
+              <p className="setting-description">Download all your transactions in one file</p>
+            </div>
+            <div className="export-buttons-group" style={{ width:'100%' }}>
+              <button className="export-button pdf" onClick={() => handleExport('pdf')}>
+                📄 PDF
+              </button>
+              <button className="export-button csv" onClick={() => handleExport('csv')}>
+                📊 CSV
+              </button>
+              <button className="export-button json" onClick={() => handleExport('json')}>
+                🔧 JSON
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+
+      /* ── Account ── */
+      case 'account': return (
+        <div className="settings-section">
+          <h2 className="section-title">Account</h2>
+          <p className="section-description">Manage your profile and account security.</p>
+
+          <div className="account-info-card">
+            <div className="account-header">
+              <div className="account-avatar">
+                {userRole === 'admin' ? '🔐' : '👤'}
+              </div>
+              <div className="account-details">
+                <h4>{userRole === 'admin' ? 'Admin User' : 'Viewer'}</h4>
+                <p>Role: {userRole === 'admin' ? 'Administrator' : 'Read-only Viewer'}</p>
+              </div>
+            </div>
+            <div className="account-actions">
+              <button className="action-button secondary">✏️ Edit Profile</button>
+              <button className="action-button secondary">🔑 Change Password</button>
+            </div>
+          </div>
+
+          <div className="danger-section">
+            <p className="danger-title">⚠️ Danger Zone</p>
+            <button className="action-button danger">🗑️ Delete Account</button>
+          </div>
+        </div>
+      );
+
+      default: return null;
     }
-
-    return (allTransactions || []).filter(t => new Date(t.date) >= startDate);
-  };
-
-  /**
-   * Export transactions as PDF
-   */
-  const exportToPDF = async () => {
-    setExportLoading(true);
-    try {
-      const transactions = getFilteredTransactions();
-      const pdf = new jsPDF();
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      
-      // Header
-      pdf.setFontSize(20);
-      pdf.text('Transaction Report', pageWidth / 2, 20, { align: 'center' });
-      
-      // Date
-      pdf.setFontSize(11);
-      pdf.text(`Report Date: ${new Date().toLocaleDateString()}`, pageWidth / 2, 30, { align: 'center' });
-      pdf.text(`Period: ${exportDateRange}`, pageWidth / 2, 37, { align: 'center' });
-      
-      // Summary
-      const totalIncome = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-      const totalExpenses = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
-      const balance = totalIncome - totalExpenses;
-      
-      pdf.setFontSize(10);
-      pdf.text(`Total Income: ${formatCurrency(convertCurrency(totalIncome, 'USD', currency, exchangeRates), currency, getLocaleForCurrency(currency))}`, 14, 47);
-      pdf.text(`Total Expenses: ${formatCurrency(convertCurrency(totalExpenses, 'USD', currency, exchangeRates), currency, getLocaleForCurrency(currency))}`, 14, 54);
-      pdf.text(`Balance: ${formatCurrency(convertCurrency(balance, 'USD', currency, exchangeRates), currency, getLocaleForCurrency(currency))}`, 14, 61);
-      
-      // Table data
-      const tableData = transactions.map(t => [
-        t.date,
-        t.category,
-        t.type.charAt(0).toUpperCase() + t.type.slice(1),
-        formatCurrency(convertCurrency(t.amount, 'USD', currency, exchangeRates), currency, getLocaleForCurrency(currency))
-      ]);
-      
-      // Table
-      pdf.autoTable({
-        head: [['Date', 'Category', 'Type', 'Amount']],
-        body: tableData,
-        startY: 70,
-        theme: 'grid',
-        headerStyles: {
-          fillColor: [99, 102, 241],
-          textColor: [255, 255, 255],
-          fontStyle: 'bold'
-        },
-        alternateRowStyles: {
-          fillColor: [245, 245, 245]
-        },
-        columnStyles: {
-          3: { halign: 'right' }
-        }
-      });
-      
-      // Footer
-      const finalY = pdf.lastAutoTable.finalY || 50;
-      pdf.setFontSize(9);
-      pdf.text('This is a professional financial report generated from your transaction history.', 14, finalY + 10);
-      
-      pdf.save(`transactions-report-${new Date().toISOString().split('T')[0]}.pdf`);
-    } catch (error) {
-      console.error('Export error:', error);
-      alert('Error exporting PDF. Please try again.');
-    } finally {
-      setExportLoading(false);
-    }
-  };
-
-  /**
-   * Export transactions as CSV
-   */
-  const exportToCSV = () => {
-    setExportLoading(true);
-    try {
-      const transactions = getFilteredTransactions();
-      const headers = ['Date', 'Category', 'Description', 'Type', 'Amount'];
-      const rows = transactions.map(t => [
-        t.date,
-        t.category,
-        `${t.category} Transfer`,
-        t.type,
-        formatCurrency(convertCurrency(t.amount, 'USD', currency, exchangeRates), currency, getLocaleForCurrency(currency))
-      ]);
-
-      let csv = headers.join(',') + '\n';
-      rows.forEach(row => {
-        csv += row.map(cell => `"${cell}"`).join(',') + '\n';
-      });
-
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Export error:', error);
-      alert('Error exporting CSV. Please try again.');
-    } finally {
-      setExportLoading(false);
-    }
-  };
-
-  /**
-   * Export transactions as JSON
-   */
-  const exportToJSON = () => {
-    setExportLoading(true);
-    try {
-      const transactions = getFilteredTransactions();
-      const data = {
-        exportDate: new Date().toISOString(),
-        period: exportDateRange,
-        currency: currency,
-        transactions: transactions.map(t => ({
-          ...t,
-          amount: formatCurrency(convertCurrency(t.amount, 'USD', currency, exchangeRates), currency, getLocaleForCurrency(currency))
-        }))
-      };
-
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `transactions-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error('Export error:', error);
-      alert('Error exporting JSON. Please try again.');
-    } finally {
-      setExportLoading(false);
-    }
-  };
-
-  const handleLogout = () => {
-    logout();
   };
 
   return (
     <div className="settings-container">
-      {/* Settings Header */}
+
+      {/* Header */}
       <div className="settings-header">
-        <h2 className="settings-title">⚙️ Settings</h2>
-        <p className="settings-subtitle">Customize your preferences and account settings</p>
+        <h1 className="settings-title">Settings</h1>
+        <p className="settings-subtitle">Manage your account preferences and application settings</p>
       </div>
 
-      {/* Settings Navigation Tabs */}
-      <div className="settings-nav">
-        <button
-          className={`tab-button ${activeTab === 'general' ? 'active' : ''}`}
-          onClick={() => setActiveTab('general')}
-        >
-          🎨 General
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'currency' ? 'active' : ''}`}
-          onClick={() => setActiveTab('currency')}
-        >
-          💱 Currency
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'notifications' ? 'active' : ''}`}
-          onClick={() => setActiveTab('notifications')}
-        >
-          🔔 Notifications
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'export' ? 'active' : ''}`}
-          onClick={() => setActiveTab('export')}
-        >
-          📊 Data Export
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'account' ? 'active' : ''}`}
-          onClick={() => setActiveTab('account')}
-        >
-          👤 Account
-        </button>
+      {/* Sliding Tab Nav */}
+      <nav className="settings-nav" ref={navRef}>
+        {/* The sliding pill */}
+        <div className="settings-nav-slider" style={sliderStyle} />
+
+        {TABS.map(tab => (
+          <button
+            key={tab.id}
+            ref={(el) => { btnRefs.current[tab.id] = el; }}
+            className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            <span className="tab-icon">{tab.icon}</span>
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+
+      {/* Tab content with slide-in animation */}
+      <div className="settings-content" key={activeTab}>
+        {renderContent()}
       </div>
 
-      {/* Settings Content */}
-      <div className="settings-content">
-
-        {/* General Settings */}
-        {activeTab === 'general' && (
-          <div className="settings-section">
-            <h3 className="section-title">General Settings</h3>
-            
-            {/* Dark Mode Toggle */}
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4 className="setting-label">Dark Mode</h4>
-                <p className="setting-description">Enable dark theme for better visibility at night</p>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={darkMode}
-                  onChange={() => setDarkMode(!darkMode)}
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-
-            {/* Default View */}
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4 className="setting-label">Default View</h4>
-                <p className="setting-description">Choose your preferred default dashboard view</p>
-              </div>
-              <select className="setting-select">
-                <option>Dashboard</option>
-                <option>Transactions</option>
-                <option>Insights</option>
-              </select>
-            </div>
-          </div>
-        )}
-
-        {/* Currency Settings */}
-        {activeTab === 'currency' && (
-          <div className="settings-section">
-            <h3 className="section-title">Currency Settings</h3>
-
-          
-              
-              <h4>Current Exchange Rates</h4>
-              <div className="exchange-rates-grid">
-                {Object.entries(exchangeRates).map(([code, rate]) => (
-                  <div key={code} className="rate-item">
-                    <span className="rate-code">{code}</span>
-                    <span className="rate-value">1 USD = {rate.toFixed(2)} {code}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-        
-        )}
-
-        {/* Notification Settings */}
-        {activeTab === 'notifications' && (
-          <div className="settings-section">
-            <h3 className="section-title">Notification Preferences</h3>
-            
-            {/* Email Notifications */}
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4 className="setting-label">Email Notifications</h4>
-                <p className="setting-description">Receive important updates via email</p>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={notificationSettings.emailNotifications}
-                  onChange={() => handleNotificationChange('emailNotifications')}
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-
-            {/* Transaction Alerts */}
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4 className="setting-label">Transaction Alerts</h4>
-                <p className="setting-description">Get notified on large transactions</p>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={notificationSettings.transactionAlerts}
-                  onChange={() => handleNotificationChange('transactionAlerts')}
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-
-            {/* Budget Warnings */}
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4 className="setting-label">Budget Warnings</h4>
-                <p className="setting-description">Alert me when approaching budget limits</p>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={notificationSettings.budgetWarnings}
-                  onChange={() => handleNotificationChange('budgetWarnings')}
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-
-            {/* Weekly Report */}
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4 className="setting-label">Weekly Report</h4>
-                <p className="setting-description">Receive weekly summary reports</p>
-              </div>
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={notificationSettings.weeklyReport}
-                  onChange={() => handleNotificationChange('weeklyReport')}
-                />
-                <span className="slider"></span>
-              </label>
-            </div>
-          </div>
-        )}
-
-        {/* Data Export Settings */}
-        {activeTab === 'export' && (
-          <div className="settings-section">
-            <h3 className="section-title">Data Export & Reports</h3>
-            
-            <p className="section-description">Export your transaction data in various formats for backup or analysis</p>
-
-            {/* Export Options */}
-            <div className="setting-item">
-              <div className="setting-info">
-                <h4 className="setting-label">Date Range</h4>
-                <p className="setting-description">Select the period for your export</p>
-              </div>
-              <select 
-                className="setting-select"
-                value={exportDateRange}
-                onChange={(e) => setExportDateRange(e.target.value)}
-              >
-                <option value="all">All Transactions</option>
-                <option value="current-month">Current Month</option>
-                <option value="last-30-days">Last 30 Days</option>
-                <option value="last-quarter">Last 3 Months</option>
-                <option value="current-year">Current Year</option>
-              </select>
-            </div>
-
-            {/* Export Buttons */}
-            <div className="export-buttons-group">
-              <button 
-                className="export-button pdf"
-                onClick={exportToPDF}
-                disabled={exportLoading}
-                title="Export as PDF with formatted report"
-              >
-                📄 {exportLoading ? 'Exporting...' : 'Export as PDF'}
-              </button>
-              <button 
-                className="export-button csv"
-                onClick={exportToCSV}
-                disabled={exportLoading}
-                title="Export as CSV for Excel or other spreadsheet applications"
-              >
-                📋 {exportLoading ? 'Exporting...' : 'Export as CSV'}
-              </button>
-              <button 
-                className="export-button json"
-                onClick={exportToJSON}
-                disabled={exportLoading}
-                title="Export as JSON for data backup or integration"
-              >
-                🔧 {exportLoading ? 'Exporting...' : 'Export as JSON'}
-              </button>
-            </div>
-
-            
-          </div>
-        )}
-
-        {/* Account Settings */}
-        {activeTab === 'account' && (
-          <div className="settings-section">
-            <h3 className="section-title">Account Information</h3>
-            
-            {/* User Info Display */}
-            <div className="account-info-card">
-              <div className="account-header">
-                <div className="account-avatar">
-                  {user?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
-                </div>
-                <div className="account-details">
-                  <h4>{user?.name || 'User'}</h4>
-                  <p>{user?.email || 'user@example.com'}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Account Actions */}
-            <div className="account-actions">
-              <button className="action-button secondary">
-                ✎ Edit Profile
-              </button>
-              <button className="action-button secondary">
-                🔒 Change Password
-              </button>
-            </div>
-
-            {/* Danger Zone */}
-            <div className="danger-section">
-              <h4 className="danger-title">Danger Zone</h4>
-              <button 
-                className="action-button danger"
-                onClick={handleLogout}
-              >
-                🚪 Logout
-              </button>
-            </div>
-          </div>
-        )}
-
-      </div>
     </div>
   );
-};
-
-export default Settings;
+}

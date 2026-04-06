@@ -3,22 +3,6 @@ import { useAppContext } from '../AppContext';
 import { convertCurrency, formatCurrency, getLocaleForCurrency } from '../utils/currencyUtils';
 import '../styles/Transactions.css';
 
-/**
- * Transactions Component
- * 
- * Displays a searchable, filterable table of transactions
- * 
- * Features:
- * - Search by category/date
- * - Filter by type (Income/Expense)
- * - Edit/Delete functionality for Admin role
- * - Add new transactions form
- * - Pagination support
- * - Responsive design
- * 
- * @component
- * @returns {JSX.Element} The transactions table and controls
- */
 const Transactions = () => {
   const { 
     transactions, 
@@ -37,62 +21,39 @@ const Transactions = () => {
   const [formData, setFormData] = useState({ date: '', amount: '', category: '', type: 'expense' });
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
-  /*const tableRef = useRef(null);*/
 
-  /**
-   * Calculate pagination
-   */
   const paginatedTransactions = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return transactions.slice(startIndex, endIndex);
-  }, [transactions, currentPage, itemsPerPage]);
+    return transactions.slice(startIndex, startIndex + itemsPerPage);
+  }, [transactions, currentPage]);
 
   const totalPages = Math.ceil((transactions?.length || 0) / itemsPerPage);
 
-  /**
-   * Handle page change
-   */
   const handlePageChange = (pageNum) => {
-    if (pageNum >= 1 && pageNum <= totalPages) {
-      setCurrentPage(pageNum);
-    }
+    if (pageNum >= 1 && pageNum <= totalPages) setCurrentPage(pageNum);
   };
 
-  /**
-   * Generate page numbers to display
-   */
   const getPageNumbers = () => {
     const pages = [];
     const maxVisible = 5;
-    
     if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
       if (currentPage <= 3) {
         for (let i = 1; i <= 4; i++) pages.push(i);
-        pages.push('...');
-        pages.push(totalPages);
+        pages.push('...'); pages.push(totalPages);
       } else if (currentPage >= totalPages - 2) {
-        pages.push(1);
-        pages.push('...');
+        pages.push(1); pages.push('...');
         for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
       } else {
-        pages.push(1);
-        pages.push('...');
+        pages.push(1); pages.push('...');
         for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
-        pages.push('...');
-        pages.push(totalPages);
+        pages.push('...'); pages.push(totalPages);
       }
     }
     return pages;
   };
 
-  /**
-   * Handle form submission for adding/editing transactions
-   */
   const handleSubmit = (e) => {
     e.preventDefault();
     if (editing) {
@@ -105,98 +66,75 @@ const Transactions = () => {
     setShowForm(false);
   };
 
-  /**
-   * Handle edit button click - populate form with transaction data
-   */
   const handleEdit = (transaction) => {
     setEditing(transaction);
-    setFormData({ 
-      date: transaction.date, 
-      amount: transaction.amount, 
-      category: transaction.category, 
-      type: transaction.type 
+    setFormData({
+      date: transaction.date,
+      amount: transaction.amount,
+      category: transaction.category,
+      type: transaction.type
     });
     setShowForm(true);
   };
 
-  /**
-   * Get category badge color/style based on category name
-   */
   const getCategoryBadgeClass = (category) => {
-    const categoryMap = {
-      'Groceries': 'food',
-      'Shopping': 'shopping',
-      'Transport': 'transport',
-      'Utilities': 'utilities',
+    const map = {
+      'Groceries': 'food', 'Shopping': 'shopping',
+      'Transport': 'transport', 'Utilities': 'utilities',
       'Entertainment': 'entertainment',
     };
-    return categoryMap[category] || 'other';
+    return map[category] || 'other';
   };
 
-  /**
-   * Get type badge color based on transaction type
-   */
-  const getTypeBadgeClass = (type) => {
-    return type === 'income' ? 'income' : 'expense';
-  };
+  const getAmountClass = (amount) => amount > 0 ? 'positive' : 'negative';
 
-  /**
-   * Check if amount is positive or negative
-   */
-  const getAmountClass = (amount) => {
-    return amount > 0 ? 'positive' : 'negative';
-  };
-
-  /**
-   * Calculate monthly comparison data
-   */
   const calculateMonthlyComparison = () => {
     const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
-    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
-    const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    const cm = now.getMonth(), cy = now.getFullYear();
+    const pm = cm === 0 ? 11 : cm - 1;
+    const py = cm === 0 ? cy - 1 : cy;
+    const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    const currentMonthTransactions = (transactions || []).filter(t => {
-      const tDate = new Date(t.date);
-      return tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear;
+    const filter = (mo, yr) => (transactions || []).filter(t => {
+      const d = new Date(t.date);
+      return d.getMonth() === mo && d.getFullYear() === yr;
     });
 
-    const previousMonthTransactions = (transactions || []).filter(t => {
-      const tDate = new Date(t.date);
-      return tDate.getMonth() === previousMonth && tDate.getFullYear() === previousYear;
-    });
+    const curr = filter(cm, cy);
+    const prev = filter(pm, py);
 
-    const currentIncome = currentMonthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-    const previousIncome = previousMonthTransactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
+    const sum = (arr, type) => arr
+      .filter(t => t.type === type)
+      .reduce((s, t) => s + Math.abs(t.amount), 0);
 
-    const currentExpenses = currentMonthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
-    const previousExpenses = previousMonthTransactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    const cI = sum(curr, 'income'),  pI = sum(prev, 'income');
+    const cE = sum(curr, 'expense'), pE = sum(prev, 'expense');
 
     return {
-      currentMonth: monthNames[currentMonth],
-      previousMonth: monthNames[previousMonth],
-      currentIncome,
-      previousIncome,
-      currentExpenses,
-      previousExpenses,
-      currentBalance: currentIncome - currentExpenses,
-      previousBalance: previousIncome - previousExpenses,
+      currentMonth: names[cm], previousMonth: names[pm],
+      currentIncome: cI, previousIncome: pI,
+      currentExpenses: cE, previousExpenses: pE,
+      currentBalance: cI - cE, previousBalance: pI - pE,
     };
   };
 
   const monthlyData = calculateMonthlyComparison();
 
-  const formatAmount = (amount) => {
-    const converted = convertCurrency(amount, 'USD', currency, exchangeRates);
-    return formatCurrency(converted, currency, getLocaleForCurrency(currency));
+  const fmt = (amount) => formatCurrency(
+    convertCurrency(amount, 'USD', currency, exchangeRates),
+    currency, getLocaleForCurrency(currency)
+  );
+
+  const changePct = (curr, prev) => {
+    if (prev === 0) return curr > 0 ? '↑ +100%' : 'No change';
+    const diff = ((curr - prev) / Math.abs(prev) * 100).toFixed(1);
+    return `${curr >= prev ? '↑' : '↓'} ${Math.abs(diff)}%`;
   };
 
   return (
     <div className="transactions-container">
-      {/* Header with Title and Controls */}
+
+      {/* ── Header ── */}
       <div className="transactions-header">
         <h2 className="transactions-title">Recent Transactions</h2>
         <div className="transactions-controls">
@@ -250,231 +188,136 @@ const Transactions = () => {
         </div>
       </div>
 
-      {/* Monthly Comparison Cards */}
+      {/* ── Monthly Comparison ── */}
       <div className="monthly-comparison">
         <div className="comparison-header">
           <h3>📊 Monthly Comparison</h3>
           <span className="comparison-period">{monthlyData.previousMonth} vs {monthlyData.currentMonth}</span>
         </div>
         <div className="comparison-grid">
-          <div className="comparison-card income">
-            <div className="comparison-card-label">Income</div>
-            <div className="comparison-values">
-              <div className="prev-month">
-                <span className="label">{monthlyData.previousMonth}</span>
-                <span className="amount">{formatAmount(monthlyData.previousIncome)}</span>
+          {[
+            { cls: 'income',  label: 'Income',   curr: monthlyData.currentIncome,   prev: monthlyData.previousIncome },
+            { cls: 'expense', label: 'Expenses',  curr: monthlyData.currentExpenses, prev: monthlyData.previousExpenses },
+            { cls: 'balance', label: 'Balance',   curr: monthlyData.currentBalance,  prev: monthlyData.previousBalance },
+          ].map(({ cls, label, curr, prev }) => (
+            <div key={cls} className={`comparison-card ${cls}`}>
+              <div className="comparison-card-label">{label}</div>
+              <div className="comparison-values">
+                <div className="prev-month">
+                  <span className="label">{monthlyData.previousMonth}</span>
+                  <span className="amount">{fmt(prev)}</span>
+                </div>
+                <div className="current-month">
+                  <span className="label">{monthlyData.currentMonth}</span>
+                  <span className="amount">{fmt(curr)}</span>
+                </div>
               </div>
-              <div className="current-month">
-                <span className="label">{monthlyData.currentMonth}</span>
-                <span className="amount">{formatAmount(monthlyData.currentIncome)}</span>
-              </div>
+              <div className="comparison-change">{changePct(curr, prev)}</div>
             </div>
-            <div className="comparison-change">
-              {monthlyData.previousIncome !== 0 ? 
-                `${monthlyData.currentIncome > monthlyData.previousIncome ? '↑' : '↓'} ${Math.abs(((monthlyData.currentIncome - monthlyData.previousIncome) / monthlyData.previousIncome * 100).toFixed(1))}%` 
-                : (monthlyData.currentIncome > 0 ? '↑ +100%' : 'No change')
-              }
-            </div>
-          </div>
-
-          <div className="comparison-card expense">
-            <div className="comparison-card-label">Expenses</div>
-            <div className="comparison-values">
-              <div className="prev-month">
-                <span className="label">{monthlyData.previousMonth}</span>
-                <span className="amount">{formatAmount(monthlyData.previousExpenses)}</span>
-              </div>
-              <div className="current-month">
-                <span className="label">{monthlyData.currentMonth}</span>
-                <span className="amount">{formatAmount(monthlyData.currentExpenses)}</span>
-              </div>
-            </div>
-            <div className="comparison-change">
-              {monthlyData.previousExpenses !== 0 ? 
-                `${monthlyData.currentExpenses > monthlyData.previousExpenses ? '↑' : '↓'} ${Math.abs(((monthlyData.currentExpenses - monthlyData.previousExpenses) / monthlyData.previousExpenses * 100).toFixed(1))}%` 
-                : (monthlyData.currentExpenses > 0 ? '↑ +100%' : 'No change')
-              }
-            </div>
-          </div>
-
-          <div className="comparison-card balance">
-            <div className="comparison-card-label">Balance</div>
-            <div className="comparison-values">
-              <div className="prev-month">
-                <span className="label">{monthlyData.previousMonth}</span>
-                <span className="amount">{formatAmount(monthlyData.previousBalance)}</span>
-              </div>
-              <div className="current-month">
-                <span className="label">{monthlyData.currentMonth}</span>
-                <span className="amount">{formatAmount(monthlyData.currentBalance)}</span>
-              </div>
-            </div>
-            <div className="comparison-change">
-              {monthlyData.previousBalance !== 0 ? 
-                `${monthlyData.currentBalance > monthlyData.previousBalance ? '↑' : '↓'} ${Math.abs(((monthlyData.currentBalance - monthlyData.previousBalance) / Math.abs(monthlyData.previousBalance) * 100).toFixed(1))}%` 
-                : (monthlyData.currentBalance > 0 ? '↑ +100%' : 'No change')
-              }
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
-      {/* Add/Edit Transaction Form */}
+      {/* ── Add / Edit Form ── */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="transaction-form" style={{ marginBottom: '20px', padding: '16px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px' }}>
-            <input
-              type="date"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-              required
-              className="search-input"
-              style={{ fontSize: '13px' }}
-            />
-            <input
-              type="number"
-              placeholder="Amount"
-              value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}
-              required
-              className="search-input"
-              style={{ fontSize: '13px' }}
-            />
-            <input
-              type="text"
-              placeholder="Category"
-              value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              required
-              className="search-input"
-              style={{ fontSize: '13px' }}
-            />
-            <select
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-              className="filter-select"
-            >
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            marginBottom: '20px', padding: '16px',
+            background: 'var(--bg-page)', borderRadius: '10px',
+            border: '1px solid var(--border)'
+          }}
+        >
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+            <input type="date"   value={formData.date}     onChange={(e) => setFormData({ ...formData, date: e.target.value })}                      required className="search-input" />
+            <input type="number" value={formData.amount}   onChange={(e) => setFormData({ ...formData, amount: parseFloat(e.target.value) })}         required className="search-input" placeholder="Amount" />
+            <input type="text"   value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}                   required className="search-input" placeholder="Category" />
+            <select             value={formData.type}      onChange={(e) => setFormData({ ...formData, type: e.target.value })}                                className="filter-select">
               <option value="income">Income</option>
               <option value="expense">Expense</option>
             </select>
           </div>
-          <button 
-            type="submit" 
-            className="btn-add-transaction"
-            style={{ marginTop: '12px' }}
-          >
+          <button type="submit" className="btn-add-transaction" style={{ marginTop: '12px' }}>
             {editing ? '✓ Update Transaction' : '✓ Add Transaction'}
           </button>
         </form>
       )}
 
-      {/* Transactions Table */}
-      <table className="transactions-table">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Description</th>
-            <th>Category</th>
-            <th>Type</th>
-            <th>Amount</th>
-            {role === 'Admin' && <th>Actions</th>}
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedTransactions && paginatedTransactions.length > 0 ? (
-            paginatedTransactions.map((transaction) => (
-              <tr key={transaction.id}>
-                <td className="transaction-date">{transaction.date}</td>
-                <td className="transaction-description">
-                  {transaction.category} Transfer
-                </td>
-                <td>
-                  <span className={`category-badge ${getCategoryBadgeClass(transaction.category)}`}>
-                    {transaction.category}
-                  </span>
-                </td>
-                <td>
-                  <span className={`type-badge ${getTypeBadgeClass(transaction.type)}`}>
-                    {transaction.type}
-                  </span>
-                </td>
-                <td className={`transaction-amount ${getAmountClass(transaction.amount)}`}>
-                  {transaction.amount > 0 ? '+' : ''}{formatCurrency(
-                    convertCurrency(transaction.amount, 'USD', currency, exchangeRates),
-                    currency,
-                    getLocaleForCurrency(currency)
-                  )}
-                </td>
-                {role === 'Admin' && (
-                  <td className="transaction-actions">
-                    <button
-                      className="action-btn edit"
-                      onClick={() => handleEdit(transaction)}
-                      title="Edit transaction"
-                    >
-                      ✎
-                    </button>
-                    <button
-                      className="action-btn delete"
-                      onClick={() => deleteTransaction(transaction.id)}
-                      title="Delete transaction"
-                    >
-                      🗑
-                    </button>
-                  </td>
-                )}
-              </tr>
-            ))
-          ) : (
+      {/* ── Table — wrapped for horizontal scroll on mobile ── */}
+      <div className="table-wrapper">
+        <table className="transactions-table">
+          <thead>
             <tr>
-              <td colSpan={role === 'Admin' ? 6 : 5} className="empty-state">
-                <div className="empty-state-icon">📭</div>
-                <div className="empty-state-text">No transactions found</div>
-              </td>
+              <th>Date</th>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Amount</th>
+              {role === 'Admin' && <th>Actions</th>}
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {paginatedTransactions && paginatedTransactions.length > 0 ? (
+              paginatedTransactions.map((t) => (
+                <tr key={t.id}>
+                  <td className="transaction-date">{t.date}</td>
+                  <td className="transaction-description">{t.category} Transfer</td>
+                  <td>
+                    <span className={`category-badge ${getCategoryBadgeClass(t.category)}`}>
+                      {t.category}
+                    </span>
+                  </td>
+                  <td>
+                    <span className={`type-badge ${t.type}`}>{t.type}</span>
+                  </td>
+                  <td className={`transaction-amount ${getAmountClass(t.amount)}`}>
+                    {t.amount > 0 ? '+' : ''}{fmt(t.amount)}
+                  </td>
+                  {role === 'Admin' && (
+                    <td className="transaction-actions">
+                      <button className="action-btn edit"   onClick={() => handleEdit(t)}          title="Edit">✎</button>
+                      <button className="action-btn delete" onClick={() => deleteTransaction(t.id)} title="Delete">🗑</button>
+                    </td>
+                  )}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={role === 'Admin' ? 6 : 5}>
+                  <div className="empty-state">
+                    <div className="empty-state-icon">📭</div>
+                    <div className="empty-state-text">No transactions found</div>
+                  </div>
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-      {/* Pagination */}
+      {/* ── Pagination ── */}
       {transactions && transactions.length > 0 && (
         <div className="pagination">
           <span className="pagination-info">
-            Showing <strong>{((currentPage - 1) * itemsPerPage) + 1}</strong> to <strong>{Math.min(currentPage * itemsPerPage, transactions.length)}</strong> of <strong>{transactions.length}</strong> transactions ({itemsPerPage} per page)
+            Showing <strong>{(currentPage - 1) * itemsPerPage + 1}</strong>–
+            <strong>{Math.min(currentPage * itemsPerPage, transactions.length)}</strong> of{' '}
+            <strong>{transactions.length}</strong>
           </span>
           <div className="pagination-controls">
-            {/* Previous Button */}
-            <button
-              className={`pagination-btn ${currentPage === 1 ? 'disabled' : ''}`}
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              ‹ 
-            </button>
-
-            {/* Page Numbers */}
-            {getPageNumbers().map((pageNum, index) => (
+            <button className="pagination-btn" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>‹</button>
+            {getPageNumbers().map((p, i) => (
               <button
-                key={index}
-                className={`pagination-btn ${pageNum === currentPage ? 'active' : ''} ${pageNum === '...' ? 'ellipsis' : ''}`}
-                onClick={() => typeof pageNum === 'number' && handlePageChange(pageNum)}
-                disabled={pageNum === '...'}
-              >
-                {pageNum}
-              </button>
+                key={i}
+                className={`pagination-btn ${p === currentPage ? 'active' : ''}`}
+                onClick={() => typeof p === 'number' && handlePageChange(p)}
+                disabled={p === '...'}
+              >{p}</button>
             ))}
-
-            {/* Next Button */}
-            <button
-              className={`pagination-btn ${currentPage === totalPages ? 'disabled' : ''}`}
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-               ›
-            </button>
+            <button className="pagination-btn" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>›</button>
           </div>
         </div>
       )}
+
     </div>
   );
 };

@@ -257,10 +257,11 @@ body.dark-mode .app-content::-webkit-scrollbar-thumb:hover {
   }
 
   .sidebar-menu-item {
-    padding: 8px 10px;
-    margin-bottom: 0;
-    font-size: 12px;
-    flex-shrink: 0;
+    .sidebar-menu-item {
+  padding: 8px 12px;
+  font-size: 13px;
+  flex-shrink: 0;
+}
   }
 
   .sidebar-footer {
@@ -639,4 +640,24 @@ body.dark-mode .app-content::-webkit-scrollbar-thumb:hover {
 
 .slide-in-up {
   animation: slideInUp 0.3s ease-in-out;
+}
+/* Make app responsive */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden; /* prevent horizontal scroll */
+}
+
+/* Responsive layout */
+.app-container {
+  display: flex;
+  flex-direction: row;
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
 }
