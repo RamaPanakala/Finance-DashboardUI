@@ -17,7 +17,7 @@ The application will open automatically at `http://localhost:3001 `
 
 ### 3. Login with Demo Credentials
 - **Viewer Mode**: Access Key: `viewer123`
-- **Admin Mode**: Email: `admin@example.com` | Password: `admin123`
+- **Admin Mode**: Email: `admin@gmail.com` | Password: `admin123`
 
 ---
 
@@ -93,7 +93,7 @@ Full permissions to view, edit, and manage all data.
 **Steps:**
 1. Click the **🔐 Admin** button on login screen
 2. Enter Credentials:
-   - Email: `admin@example.com`
+   - Email: `admin@gmail.com`
    - Password: `admin123`
 3. Click **"Login as Admin"**
 
@@ -231,11 +231,11 @@ frontend/
 | Role | Username | Password | Access Method |
 |------|----------|----------|---|
 | Viewer | N/A | `viewer123` | Access Key |
-| Admin | `admin@example.com` | `admin123` | Email & Password |
+| Admin | `admin@gmail.com` | `admin123` | Email & Password |
 
 ### Testing Login
 1. **Test Viewer Access**: Use key `viewer123`
-2. **Test Admin Access**: Use `admin@example.com` / `admin123`
+2. **Test Admin Access**: Use `admin@gmail.com` / `admin123`
 3. **Test Role Switching**: 
    - Login as Admin
    - Open Profile

@@ -1,3 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/*
+  THE PROBLEM (confirmed by DevTools):
+  Tailwind base sets html { height: 100% } which makes html exactly
+  896px (viewport). Then body/root/app-wrapper all inherit that height
+  and get locked to it. Content overflows silently and nothing scrolls.
+
+  THE FIX:
+  html must be the scroll container OR let the window scroll.
+  Since html has overflowY:auto but clientHeight == scrollHeight,
+  the content isn't actually overflowing html — it's being clipped
+  by the fixed height. Setting height:auto lets html grow with content
+  and the window scroll bar appears naturally.
+*/
+
+html {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+}
+
+body {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+}
+
+#root {
+  height: auto !important;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+}

@@ -1,17 +1,5 @@
 /* ══════════════════════════════════════════════════════════════
-   App.css  —  Definitive Fix
-   
-   THE SCROLL PROBLEM CHAIN:
-   html → body → #root → .app-wrapper → .app-container → .app-content
-   
-For window-level scrolling to work, EVERY ancestor in this chain
-must have:
-     • NO fixed height (use min-height instead)
-     • NO overflow:hidden vertically
-     • NO flex/grid that collapses height
-   
-   The sidebar is position:fixed — it does NOT participate in flow.
-   .app-container uses margin-left to offset from it.
+   App.css  —  Final
    ══════════════════════════════════════════════════════════════ */
 
 *, *::before, *::after {
@@ -20,7 +8,6 @@ must have:
   padding: 0;
 }
 
-/* ── CSS Variables ────────────────────────────────────────────── */
 :root {
   --bg-page:           #f4f5f8;
   --bg-card:           #ffffff;
@@ -38,7 +25,6 @@ must have:
   --topbar-height:     56px;
 }
 
-/* ── Dark Mode Variables ──────────────────────────────────────── */
 body.dark-mode {
   --bg-page:        #0d1117;
   --bg-card:        #161b22;
@@ -51,23 +37,10 @@ body.dark-mode {
   --text-muted:     #6e7681;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   SCROLL CHAIN — every ancestor must allow natural height growth
-   ══════════════════════════════════════════════════════════════ */
-
-html {
-  /* Only block horizontal overflow — never vertical */
-  overflow-x: hidden;
-  /* Do NOT set height:100% — this caps html to viewport height
-     and kills scrolling on everything inside */
-}
-
 body {
   background: var(--bg-page);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  overflow-x: hidden;
-  /* Do NOT set overflow-y or height — body must grow freely */
   transition: background 0.3s ease, color 0.3s ease;
 }
 
@@ -76,36 +49,31 @@ body.dark-mode {
   color: var(--text-primary);
 }
 
-#root {
-  /* Must NOT be display:flex or have height:100vh here —
-     that would make it a fixed-height scroll container */
-  overflow-x: hidden;
-}
-
-/* ── App Wrapper ──────────────────────────────────────────────── */
-/* CRITICAL: display:block (not flex) so height grows with content.
-   Flex on a row container collapses height to the tallest child,
-   which on first render may be 100vh — clipping everything below.  */
+/* ── App Wrapper ──────────────────────────────────────────────────
+   FIX: Use flex column instead of block.
+   display:block was fixing scroll but breaking Recharts because
+   ResponsiveContainer measures its parent's offsetWidth — and a
+   block child inside a block parent with no explicit width returns
+   -1 on first paint before layout completes.
+   Flex column gives children a real measured width immediately.
+   Scroll still works because flex-direction:column + height:auto
+   means the container grows with content, not clips to viewport.  */
 .app-wrapper {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
   overflow-x: hidden;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   DESKTOP LAYOUT
-   Sidebar is position:fixed — NOT in flow.
-   app-container offsets itself with margin-left.
-   Width = full viewport minus sidebar.
-   NO height constraints, NO overflow-y.
-   ══════════════════════════════════════════════════════════════ */
+/* ── Desktop: sidebar is fixed, container offsets with margin ──── */
 .app-container {
   margin-left: var(--sidebar-width);
   width: calc(100% - var(--sidebar-width));
-  /* min-height ensures the bg colour covers the whole page even
-     when content is short — but never caps the height */
   min-height: 100vh;
   background: var(--bg-page);
   overflow-x: hidden;
+  /* NO height, NO overflow-y — window scrolls */
   transition:
     margin-left 0.35s cubic-bezier(0.4, 0, 0.2, 1),
     width       0.35s cubic-bezier(0.4, 0, 0.2, 1),
@@ -114,8 +82,8 @@ body.dark-mode {
 
 body.dark-mode .app-container { background: var(--bg-page); }
 
-/* ── app-content: transparent pass-through, no constraints ───── */
 .app-content {
+  width: 100%;
   overflow-x: hidden;
   background: var(--bg-page);
   transition: background 0.3s ease;
@@ -123,7 +91,6 @@ body.dark-mode .app-container { background: var(--bg-page); }
 
 body.dark-mode .app-content { background: var(--bg-page); }
 
-/* ── Content Wrapper ─────────────────────────────────────────── */
 .content-wrapper {
   display: flex;
   flex-direction: row;
@@ -133,60 +100,37 @@ body.dark-mode .app-content { background: var(--bg-page); }
   max-width: 100%;
   align-items: flex-start;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
-.content-wrapper.with-sidebar {
-  /* dashboard has a right panel — same as default row layout */
-  align-items: flex-start;
-}
-
-/* ── Main content column ─────────────────────────────────────── */
 .main-content {
   flex: 1;
-  /* min-width:0 is CRITICAL — without it a flex child won't shrink
-     below its content's intrinsic width, causing overflow */
-  min-width: 0;
+  min-width: 0;       /* CRITICAL for Recharts: lets flex child shrink
+                         so ResponsiveContainer gets a real width      */
   display: flex;
   flex-direction: column;
   gap: 24px;
-  overflow-x: hidden;
 }
 
-/* ── Right sidebar (dashboard only) ─────────────────────────── */
-.right-sidebar {
-  width: 320px;
-  flex-shrink: 0;
-}
-
-/* ══════════════════════════════════════════════════════════════
-   TABLET  ≤ 1024px
-   Sidebar collapses to 72px icon rail (Sidebar.css handles width).
-   app-container adjusts its margin to match.
-   ══════════════════════════════════════════════════════════════ */
+/* ── Tablet ≤ 1024px ────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .app-container {
     margin-left: var(--sidebar-collapsed);
     width: calc(100% - var(--sidebar-collapsed));
   }
-
-  .right-sidebar { display: none; }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   MOBILE  ≤ 768px
-   Sidebar becomes a drawer (handled entirely in Sidebar.css).
-   app-container takes full width and sits below the topbar.
-   ══════════════════════════════════════════════════════════════ */
+/* ── Mobile ≤ 768px ─────────────────────────────────────────────── */
 @media (max-width: 768px) {
+  .app-wrapper {
+    flex-direction: column;
+  }
+
   .app-container {
     margin-left: 0 !important;
     width: 100% !important;
-    /* Push below the fixed mobile topbar */
     margin-top: var(--topbar-height);
     min-height: calc(100vh - var(--topbar-height));
     padding-bottom: 24px;
-    overflow-x: hidden;
   }
 
   .content-wrapper {
@@ -194,21 +138,13 @@ body.dark-mode .app-content { background: var(--bg-page); }
     padding: 12px;
     gap: 12px;
   }
-
-  .main-content {
-    width: 100%;
-  }
-
-  .right-sidebar { display: none; }
 }
 
 @media (max-width: 480px) {
   .content-wrapper { padding: 8px; gap: 10px; }
 }
 
-/* ══════════════════════════════════════════════════════════════
-   MODAL
-   ══════════════════════════════════════════════════════════════ */
+/* ── Modal ──────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -224,8 +160,7 @@ body.dark-mode .app-content { background: var(--bg-page); }
 }
 
 @keyframes overlayFadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from { opacity: 0; } to { opacity: 1; }
 }
 
 .modal-content {
@@ -245,47 +180,30 @@ body.dark-mode .app-content { background: var(--bg-page); }
 
 @keyframes modalSlideUp {
   from { opacity: 0; transform: translateY(20px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0)    scale(1); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .modal-content::-webkit-scrollbar       { width: 4px; }
 .modal-content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-/* ══════════════════════════════════════════════════════════════
-   UTILITY CLASSES
-   ══════════════════════════════════════════════════════════════ */
+/* ── Utilities ──────────────────────────────────────────────────── */
 .hidden  { display: none !important; }
 .visible { display: block; }
-
 .flex-center  { display: flex; align-items: center; justify-content: center; }
 .flex-between { display: flex; align-items: center; justify-content: space-between; }
-
-.gap-1 { gap: 4px; }
-.gap-2 { gap: 8px; }
-.gap-3 { gap: 16px; }
-.gap-4 { gap: 24px; }
-
+.gap-1 { gap: 4px; }   .gap-2 { gap: 8px; }
+.gap-3 { gap: 16px; }  .gap-4 { gap: 24px; }
 .rounded-sm   { border-radius: 4px; }
 .rounded      { border-radius: 8px; }
 .rounded-lg   { border-radius: 12px; }
 .rounded-full { border-radius: 9999px; }
-
 .text-muted   { color: var(--text-muted); }
 .text-success { color: #2ecc71; }
 .text-danger  { color: #ff4757; }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-20px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-@keyframes slideInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeIn      { from { opacity: 0; }                              to { opacity: 1; } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInUp   { from { opacity: 0; transform: translateY(20px);  } to { opacity: 1; transform: translateY(0); } }
 
 .fade-in       { animation: fadeIn      0.3s ease; }
 .slide-in-left { animation: slideInLeft 0.3s ease; }

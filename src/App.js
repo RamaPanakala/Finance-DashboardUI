@@ -23,7 +23,7 @@ const PlaceholderPage = ({ title, icon }) => (
   }}>
     <div style={{ fontSize: '64px' }}>{icon}</div>
     <h2 style={{ color: 'var(--text-primary)', marginBottom: '8px' }}>{title}</h2>
-    <p style={{ color: 'var(--text-secondary)' }}>This page is coming soon!</p>
+    <p style={{ color: 'var(--text-muted)' }}>This page is coming soon!</p>
   </div>
 );
 
@@ -47,18 +47,6 @@ function AppContent() {
   };
 
   return (
-    /*
-      Layout structure:
-      ┌─────────────────────────────────────────┐
-      │ .app-wrapper  (display:block)           │
-      │  ├── <Sidebar />  (position:fixed)      │
-      │  │    └── .mobile-topbar (mobile only)  │
-      │  └── .app-container  (margin-left:250px)│
-      │       └── .app-content                  │
-      │            └── .content-wrapper         │
-      │                 └── .main-content       │
-      └─────────────────────────────────────────┘
-    */
     <div className="app-wrapper">
       <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} />
 
@@ -68,11 +56,6 @@ function AppContent() {
             <div className="main-content">
               {renderComponent()}
             </div>
-
-            {/* Right panel — dashboard only, hidden on tablet/mobile */}
-            {activeMenu === 'dashboard' && (
-              <div className="right-sidebar" />
-            )}
           </div>
         </div>
       </div>
